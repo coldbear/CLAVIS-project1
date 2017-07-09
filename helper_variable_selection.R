@@ -36,3 +36,15 @@ selectforoutlier<-function(x){
   x <-x [! x %in% remove]
   return(x)
 }
+
+
+
+
+print_glmnet_coefs <- function(cvfit, s="lambda.1se") {
+  ind <- which(coef(cvfit, s=s) != 0)
+  df <- data.frame(
+    feature=rownames(coef(cvfit, s=s))[ind],
+    coeficient=coef(cvfit, s=s)[ind]
+  )
+  kable(df)
+}

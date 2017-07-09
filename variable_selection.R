@@ -84,17 +84,7 @@ plot(cvfit)
 coef(cvfit, s = "lambda.min")[which(coef(cvfit, s = "lambda.1se") != 0)]
 
 
-
-
-print_glmnet_coefs <- function(cvfit, s="lambda.1se") {
-  ind <- which(coef(cvfit, s=s) != 0)
-  df <- data.frame(
-    feature=rownames(coef(cvfit, s=s))[ind],
-    coeficient=coef(cvfit, s=s)[ind]
-  )
-  kable(df)
-}
-
+#print co-efficients
 print_glmnet_coefs(cvfit = cvfit)
 
 
