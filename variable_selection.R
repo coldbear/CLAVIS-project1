@@ -77,9 +77,12 @@ x[,tobetreated] = sapply(x[,tobetreated], normalize)
 x = model.matrix(~.-1,data = x, contrasts.arg = lapply(x[,sapply(x, is.factor)], contrasts, contrasts = FALSE))
 
 #LASSO
-fit = glmnet(x = x, y = fold_1$order)
+fit = glmnet(x = x, y = fold_1$order, alpha = 0.2)
 plot(fit)
+
 cvfit = cv.glmnet(x = x, y = fold_1$order)
+
+
 plot(cvfit)
 coef(cvfit, s = "lambda.min")[which(coef(cvfit, s = "lambda.1se") != 0)]
 
@@ -93,5 +96,27 @@ print_glmnet_coefs(cvfit = cvfit, s = "lambda.1se")
 
 
 
+
+# Elastic Net
+
+fit.en = glmnet(x = x, y = fold_1$order, alpha = 0.5)
+plot(fit.en)
+
+
+
+#Ridge, LASSO and Elastic Net
+
+cv1 = cv.glmnet(x = x, y = fold_1$order, alpha=1)
+cv.5 = cv.glmnet(x = x, y = fold_1$order, alpha=0.5)
+cv0 = cv.glmnet(x = x, y = fold_1$order, alpha=0)
+
+
+
+par(mfrow=c(1,1))
+plot(cv1);plot(cv.5);plot(cv0)
+plot(log(cv1$lambda),cv1$cvm,pch=19,col="red",xlab="log(Lambda)",ylab=cv1$name)
+points(log(cv.5$lambda),cv.5$cvm,pch=19,col="grey")
+points(log(cv0$lambda),cv0$cvm,pch=19,col="blue")
+legend("topleft",legend=c("LASSO","Elastic Net","Ridge"),pch=19,col=c("red","grey","blue"))
 
 
