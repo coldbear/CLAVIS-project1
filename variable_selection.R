@@ -85,7 +85,12 @@ coef(cvfit, s = "lambda.min")[which(coef(cvfit, s = "lambda.1se") != 0)]
 
 
 #print co-efficients
-print_glmnet_coefs(cvfit = cvfit)
+
+#Lowest MSE
+print_glmnet_coefs(cvfit = cvfit, s = "lambda.min")
+#Most regularized model
+print_glmnet_coefs(cvfit = cvfit, s = "lambda.1se")
+
 
 
 

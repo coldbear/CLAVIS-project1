@@ -40,7 +40,7 @@ selectforoutlier<-function(x){
 
 
 
-print_glmnet_coefs <- function(cvfit, s="lambda.1se") {
+print_glmnet_coefs <- function(cvfit, s="lambda.min") {
   ind <- which(coef(cvfit, s=s) != 0)
   df <- data.frame(
     feature=rownames(coef(cvfit, s=s))[ind],
