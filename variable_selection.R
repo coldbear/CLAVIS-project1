@@ -66,7 +66,11 @@ x$'19.1.3.availability_changes14_obs_5.Mat'= NULL
 #x = as.matrix(x, xfactors)
 
 #first round selected features
+<<<<<<< HEAD
 selected_features = c("order", "pid","content","group","category","X10.meanPrice_deviation_percentage.Mat","X12.lastObservation.Mat","X13.1.adFlag_prop_obs_5.Mat",	"X13.2.adFlag_prop_obs_10.Mat",	"X13.3.adFlag_prop_obs_15.Mat",	"X13.4.adFlag_prop_obs_20.Mat",	"X13.5.adFlag_prop_obs_30.Mat",	"X13.6.adFlag_prop_obs_50.Mat",	"X15.1.adFlag_last_1_day.Mat",	"X15.2.adFlag_last_0_day.Mat",	"X15.3.adFlag_last_1_obs.Mat",	"X15.4.adFlag_last_0_obs.Mat",	"X15.5.adFlag_last_1_obs_norm.Mat",	"X20.3.2.1availability2_prop_obs_15.Mat",	"X20.7.3.availability3_prop_obs_75.Mat",	"X20.8.3.availability3_prop_obs_100.Mat",	"X20.8.4.availability4_prop_obs_100.Mat",	"X25.pid_prop_per_day.Mat",	"X3.3.Unique_pids_per_category.DB",	"X3.4.Unique_pids_per_day.DB",	"X7.weekday.Mat",	"19.1.1.availability_changes12_obs_5.Mat",	"19.1.11.availability_changes42_obs_5.Mat",	"19.2.2.availability_changes13_obs_10.Mat",	"19.2.4.availability_changes21_obs_10.Mat",	"19.4.8.availability_changes32_obs_20.Mat",	"19.5.11.availability_changes42_obs_30.Mat",	"19.6.5.availability_changes23_obs_50.Mat",	"19.6.6.availability_changes24_obs_50.Mat",	"19.6.7.availability_changes31_obs_50.Mat",	"19.7.8.availability_changes32_obs_75.Mat",	"19.8.3.availability_changes14_obs_100.Mat",	"19.8.4.availability_changes21_obs_100.Mat",	"19.8.9.availability_changes34_obs_100.Mat",	"cPriceNA",	"unit",	"genericProduct",	"salesIndex",	"campaignIndex","X3.1.1.Unique_pids_per_group_binned.DB","X3.1.2.Unique_pids_per_group_binned_2.DB","X3.2.1.Unique_pids_per_manufacturer_binned.DB","X3.2.2.Unique_pids_per_manufacturer_binned_2.DB","X3.3.1.Unique_pids_per_category_binned.DB","X3.4.1.Unique_pids_per_day_binned.DB","day2")
+=======
+selected_features = c("pid","price","content","group","category","X10.meanPrice_deviation_percentage.Mat","X12.lastObservation.Mat","X13.1.adFlag_prop_obs_5.Mat",	"X13.2.adFlag_prop_obs_10.Mat",	"X13.3.adFlag_prop_obs_15.Mat",	"X13.4.adFlag_prop_obs_20.Mat",	"X13.5.adFlag_prop_obs_30.Mat",	"X13.6.adFlag_prop_obs_50.Mat",	"X15.1.adFlag_last_1_day.Mat",	"X15.2.adFlag_last_0_day.Mat",	"X15.3.adFlag_last_1_obs.Mat",	"X15.4.adFlag_last_0_obs.Mat",	"X15.5.adFlag_last_1_obs_norm.Mat",	"X20.3.2.1availability2_prop_obs_15.Mat",	"X20.7.3.availability3_prop_obs_75.Mat",	"X20.8.3.availability3_prop_obs_100.Mat",	"X20.8.4.availability4_prop_obs_100.Mat",	"X25.pid_prop_per_day.Mat",	"X3.3.Unique_pids_per_category.DB",	"X3.4.Unique_pids_per_day.DB",	"X7.weekday.Mat",	"19.1.1.availability_changes12_obs_5.Mat",	"19.1.11.availability_changes42_obs_5.Mat",	"19.2.2.availability_changes13_obs_10.Mat",	"19.2.4.availability_changes21_obs_10.Mat",	"19.4.8.availability_changes32_obs_20.Mat",	"19.5.11.availability_changes42_obs_30.Mat",	"19.6.5.availability_changes23_obs_50.Mat",	"19.6.6.availability_changes24_obs_50.Mat",	"19.6.7.availability_changes31_obs_50.Mat",	"19.7.8.availability_changes32_obs_75.Mat",	"19.8.3.availability_changes14_obs_100.Mat",	"19.8.4.availability_changes21_obs_100.Mat",	"19.8.9.availability_changes34_obs_100.Mat",	"cPriceNA",	"unit",	"genericProduct",	"salesIndex",	"campaignIndex","X3.1.1.Unique_pids_per_group_binned.DB","X3.1.2.Unique_pids_per_group_binned_2.DB","X3.2.1.Unique_pids_per_manufacturer_binned.DB","X3.2.2.Unique_pids_per_manufacturer_binned_2.DB","X3.3.1.Unique_pids_per_category_binned.DB","X3.4.1.Unique_pids_per_day_binned.DB","day2")
+>>>>>>> 94b8cbce73d53d0e67478d0f6aa94a2df1e6f8cc
 x = x[,selected_features]
 
 #select numeric variables and standardize them
@@ -77,15 +81,36 @@ x[,tobetreated] = sapply(x[,tobetreated], normalize)
 x = model.matrix(~.-1,data = x, contrasts.arg = lapply(x[,sapply(x, is.factor)], contrasts, contrasts = FALSE))#dummies and ignore
 
 #LASSO
-fit = glmnet(x = x, y = fold_1$order)
+fit = glmnet(x = x, y = fold_1$order, alpha = 0.2)
 plot(fit)
+
 cvfit = cv.glmnet(x = x, y = fold_1$order)
+
+
 plot(cvfit)
 coef(cvfit, s = "lambda.min")[which(coef(cvfit, s = "lambda.1se") != 0)]
 
 
+#print co-efficients
+
+#Lowest MSE
+print_glmnet_coefs(cvfit = cvfit, s = "lambda.min")
+#Most regularized model
+print_glmnet_coefs(cvfit = cvfit, s = "lambda.1se")
 
 
+
+
+# Elastic Net
+
+fit.en = glmnet(x = x, y = fold_1$order, alpha = 0.5)
+plot(fit.en)
+
+
+
+#Ridge, LASSO and Elastic Net
+
+<<<<<<< HEAD
 print_glmnet_coefs <- function(cvfit, s="lambda.1se") {
   ind <- which(coef(cvfit, s=s) != 0)
   df <- data.frame(
@@ -94,9 +119,19 @@ print_glmnet_coefs <- function(cvfit, s="lambda.1se") {
   )
   table(df)
 }
+=======
+cv1 = cv.glmnet(x = x, y = fold_1$order, alpha=1)
+cv.5 = cv.glmnet(x = x, y = fold_1$order, alpha=0.5)
+cv0 = cv.glmnet(x = x, y = fold_1$order, alpha=0)
+>>>>>>> 94b8cbce73d53d0e67478d0f6aa94a2df1e6f8cc
 
-print_glmnet_coefs(cvfit = cvfit)
 
 
+par(mfrow=c(1,1))
+plot(cv1);plot(cv.5);plot(cv0)
+plot(log(cv1$lambda),cv1$cvm,pch=19,col="red",xlab="log(Lambda)",ylab=cv1$name)
+points(log(cv.5$lambda),cv.5$cvm,pch=19,col="grey")
+points(log(cv0$lambda),cv0$cvm,pch=19,col="blue")
+legend("topleft",legend=c("LASSO","Elastic Net","Ridge"),pch=19,col=c("red","grey","blue"))
 
 
