@@ -20,7 +20,7 @@ prop.table(table(fold_1$order))
 
 results <- setNames(as.data.frame(as.numeric(test$order)-1),"Order")
 results$price <- test$price
-results$revenue <- results$Order*results$price
+results$revenue <- results$order*results$price
 
 ## Benchmarks
 
@@ -42,6 +42,14 @@ sqrt(sum((one.order$revenue-one.order$FalsePred)^2))
 costs <- matrix(c(0,-2,-1,0),nrow=2,byrow=T) 
 
 ## Incorporate costs matrix in corr_mat 
+
+# if(test$order=="no")
+#   cost1 <- sqrt(sum((test$price)^2))
+# 
+# for(i in 1:length(results)){ 
+#   if(results$Order=="no") {
+#     cost1 <- sqrt(sum((results$revenue-results$price*0)^2))}
+# }
 
 ## Linear Model
 
