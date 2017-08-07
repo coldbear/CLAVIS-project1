@@ -77,10 +77,10 @@ x[,tobetreated] = sapply(x[,tobetreated], normalize)
 x = model.matrix(~.-1,data = x, contrasts.arg = lapply(x[,sapply(x, is.factor)], contrasts, contrasts = FALSE))
 
 #LASSO
-fit = glmnet(x = x, y = fold_1$order, alpha = 0.2)
+fit = glmnet(x = x, y = fold_1$order, alpha = 0.2, family = "binomial")
 plot(fit)
 
-cvfit = cv.glmnet(x = x, y = fold_1$order)
+cvfit = cv.glmnet(x = x, y = fold_1$order, family = "binomial")
 
 
 plot(cvfit)
@@ -99,16 +99,20 @@ print_glmnet_coefs(cvfit = cvfit, s = "lambda.1se")
 
 # Elastic Net
 
-fit.en = glmnet(x = x, y = fold_1$order, alpha = 0.5)
+fit.en = glmnet(x = x, y = fold_1$order,family = "binomial" ,alpha = 0.5)
 plot(fit.en)
+alphas = seq(from = 0.1, to = 1, by = 0.1)
 
+
+cvfit.en = cv.glmnet(x = x, y = fold_1$order, family = "binomial", alpha = alphas)
+plot(cvfit.en)
 
 
 #Ridge, LASSO and Elastic Net
 
-cv1 = cv.glmnet(x = x, y = fold_1$order, alpha=1)
-cv.5 = cv.glmnet(x = x, y = fold_1$order, alpha=0.5)
-cv0 = cv.glmnet(x = x, y = fold_1$order, alpha=0)
+cv1 = cv.glmnet(x = x, y = fold_1$order, alpha=1, family = "binomial")
+cv.5 = cv.glmnet(x = x, y = fold_1$order, alpha=0.5, family = "binomial")
+cv0 = cv.glmnet(x = x, y = fold_1$order, alpha=0, family = "binomial")
 
 
 
