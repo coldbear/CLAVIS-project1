@@ -2,8 +2,6 @@
 library(randomForest)
 
 
-saveRDS(fold_1, "alt")
-fold2 <- readRDS("alt")
 fold <- readRDS("forPDP")
 
 #take a stratified sample 
