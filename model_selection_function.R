@@ -14,6 +14,9 @@
 # yhat = vector with predictions or data.frame with more than one vector of predictions
 # if double = TRUE for more than one set of predictions, they are displayed in separate graphs
 
+# OUTPUT
+# interactive roc curve
+# html/ javascript code (for embedding)
 
 plot_roccurves <- function(y, yhat,  
   labelround = 2, 
@@ -23,6 +26,9 @@ plot_roccurves <- function(y, yhat,
   inherit.aes = TRUE,
   color = "#FF99FF",
   double= FALSE){
+  
+  # load package
+  if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
   
   # check yhat
   if(is.vector(yhat)){
