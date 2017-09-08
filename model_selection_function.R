@@ -16,6 +16,8 @@
 
 # OUTPUT
 # interactive roc curve
+# pr curve
+# uplift curve
 # html/ javascript code (for embedding)
 
 plot_roccurves <- function(y, yhat,  
