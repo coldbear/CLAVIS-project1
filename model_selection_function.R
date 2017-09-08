@@ -29,6 +29,7 @@ plot_roccurves <- function(y, yhat,
   
   # load package
   if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
+  if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
   
   # check yhat
   if(is.vector(yhat)){
