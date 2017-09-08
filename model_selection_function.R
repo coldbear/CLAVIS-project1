@@ -5,7 +5,7 @@
 
 #############################################################################
 #
-#                                 ROC CURVES
+#            MODEL SELECTION: ROC CURVES; PR CURVES; UPLIFT CURVES
 #
 #############################################################################
 
@@ -58,6 +58,8 @@ plot_roccurves <- function(y, yhat,
   # combine predictions & true value in a data frame
   data = data.frame(y, yhat)
   
+  
+  ####################       ROC CURVES       ####################
   # plot
   if(ncol == 1){
     
@@ -106,7 +108,27 @@ plot_roccurves <- function(y, yhat,
     # output code
     code <-  export_interactive_roc(plot)
   }  
-    
+  
+  
+  
+  ####################       PRECISION-RECALL CURVES       ####################
+  
+  for(i in 1:ncol){
+    pr <- pr.curve(scores.class0 = yhat[,i], weights.class0 = y, curve = TRUE) 
+    plot(pr)
+    }
+  
+  
+  
+  ####################       UPLIFT CURVES       ####################
+  
+  for(i in 1:ncol){
+    ks_plot(actuals=y, predictedScores=yhat[,i])
+  }
+  
+  
+  
+  # code for interactive ROC Curve Implementation  
   return(code)  
     
   }
