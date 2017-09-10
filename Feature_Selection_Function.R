@@ -1,3 +1,10 @@
+
+###############################
+### SKIP TO LINE:138 ##########
+###############################
+
+
+#create dataset
 rm(list=ls())
 
 source("helper_variable_selection.R")
@@ -32,9 +39,9 @@ fold_1[,factorize] = lapply(fold_1[,factorize], factor)
 #find factors
 names(Filter(is.factor, fold_1))#14
 #xfactors = model.matrix(order~ adFlag + availability + cPriceNA + unit + genericProduct + salesIndex +
-                        #campaignIndex + X3.1.1.Unique_pids_per_group_binned.DB +X3.1.2.Unique_pids_per_group_binned_2.DB +
-                        #X3.2.1.Unique_pids_per_manufacturer_binned.DB + X3.2.2.Unique_pids_per_manufacturer_binned_2.DB + 
-                        #X3.3.1.Unique_pids_per_category_binned.DB + X3.4.1.Unique_pids_per_day_binned.DB + day2, data = fold_1) [-1]
+#campaignIndex + X3.1.1.Unique_pids_per_group_binned.DB +X3.1.2.Unique_pids_per_group_binned_2.DB +
+#X3.2.1.Unique_pids_per_manufacturer_binned.DB + X3.2.2.Unique_pids_per_manufacturer_binned_2.DB + 
+#X3.3.1.Unique_pids_per_category_binned.DB + X3.4.1.Unique_pids_per_day_binned.DB + day2, data = fold_1) [-1]
 
 #xfactors = as.data.frame(xfactors)
 
@@ -73,54 +80,107 @@ x = x[,selected_features]
 tobetreated = selectforoutlier(x)
 x[,tobetreated] = sapply(x[,tobetreated], normalize)
 
-#create dummies for factors and include all variables in the set of covariates
-x = model.matrix(~.-1,data = x, contrasts.arg = lapply(x[,sapply(x, is.factor)], contrasts, contrasts = FALSE))
 
-#LASSO
-fit = glmnet(x = x, y = fold_1$order, alpha = 0.2, family = "binomial")
-plot(fit)
-
-cvfit = cv.glmnet(x = x, y = fold_1$order, family = "binomial")
-
-
-plot(cvfit)
-coef(cvfit, s = "lambda.min")[which(coef(cvfit, s = "lambda.1se") != 0)]
-
-
-#print co-efficients
-
-#Lowest MSE
-print_glmnet_coefs(cvfit = cvfit, s = "lambda.min")
-#Most regularized model
-print_glmnet_coefs(cvfit = cvfit, s = "lambda.1se")
+#final dataset
+traindata = cbind(x, fold_1$order)
+colnames(traindata)[52] = "order"
+rm(fold_1)
+rm(x)
 
 
 
+## Feature Selection/Importance with RF
+#install.packages("randomForest")
+library(randomForest)
 
-# Elastic Net
+set.seed(123)
+control = rfeControl(functions=rfFuncs, method="cv", number=10)
 
-fit.en = glmnet(x = x, y = fold_1$order,family = "binomial" ,alpha = 0.5)
-plot(fit.en)
-alphas = seq(from = 0.1, to = 1, by = 0.1)
-
-
-cvfit.en = cv.glmnet(x = x, y = fold_1$order, family = "binomial", alpha = alphas)
-plot(cvfit.en)
-
-
-#Ridge, LASSO and Elastic Net
-
-cv1 = cv.glmnet(x = x, y = fold_1$order, alpha=1, family = "binomial")
-cv.5 = cv.glmnet(x = x, y = fold_1$order, alpha=0.5, family = "binomial")
-cv0 = cv.glmnet(x = x, y = fold_1$order, alpha=0, family = "binomial")
+rfe.train = rfe(traindata[1:51], traindata[,52], sizes=1:12, rfeControl=control)
+plot(rfe.train, type=c("g", "o"), cex = 1.0, col = 1:11)
+predictors(rfe.train)
 
 
 
-par(mfrow=c(1,1))
-plot(cv1);plot(cv.5);plot(cv0)
-plot(log(cv1$lambda),cv1$cvm,pch=19,col="red",xlab="log(Lambda)",ylab=cv1$name)
-points(log(cv.5$lambda),cv.5$cvm,pch=19,col="grey")
-points(log(cv0$lambda),cv0$cvm,pch=19,col="blue")
-legend("topleft",legend=c("LASSO","Elastic Net","Ridge"),pch=19,col=c("red","grey","blue"))
+## Feature Selection/Importance with Boruata
+
+boruta.train = Boruta(order~., data = traindata, doTrace = 2)
+print(boruta.train)
+
+
+plot(boruta.train, xlab = "", xaxt = "n")
+lz=lapply(1:ncol(boruta.train$ImpHistory),function(i)
+  boruta.train$ImpHistory[is.finite(boruta.train$ImpHistory[,i]),i])
+names(lz) = colnames(boruta.train$ImpHistory)
+Labels = sort(sapply(lz,median))
+axis(side = 1,las=2,labels = names(Labels),
+       at = 1:ncol(boruta.train$ImpHistory), cex.axis = 0.7)
+
+
+
+final.boruta = TentativeRoughFix(boruta.train)
+print(final.boruta)
+
+
+
+getSelectedAttributes(final.boruta, withTentative = F)
+
+
+
+boruta.df = attStats(final.boruta)
+class(boruta.df)
+print(boruta.df)
+
+
+
+
+
+##############################
+#### Feature Selection########
+##############################
+#install.packages("Boruta")
+library(Boruta)
+library(randomForest)
+
+#load saved datasets (can be found on slack: apa)
+boruta.train = readRDS(file = "boruta.train.RDS")
+rfe.train = readRDS(file = "rfe.train.RDS")
+
+# RF Feature Importance
+plot(rfe.train, type=c("g", "o"), cex = 1.0, col = 1:11)
+
+# Boruta Feature Selection
+print(boruta.train)
+
+# Boruta Tentative
+plot(boruta.train, xlab = "", xaxt = "n")
+lz=lapply(1:ncol(boruta.train$ImpHistory),function(i)
+  boruta.train$ImpHistory[is.finite(boruta.train$ImpHistory[,i]),i])
+names(lz) = colnames(boruta.train$ImpHistory)
+Labels = sort(sapply(lz,median))
+axis(side = 1,las=2,labels = names(Labels),
+     at = 1:ncol(boruta.train$ImpHistory), cex.axis = 0.7)
+
+
+# Boruta Final
+final.boruta = TentativeRoughFix(boruta.train)
+print(final.boruta)
+
+getSelectedAttributes(final.boruta, withTentative = F)
+
+
+boruta.df = attStats(final.boruta)
+class(boruta.df)
+print(boruta.df)
+
+
+plot(final.boruta, xlab = "", xaxt = "n")
+lz=lapply(1:ncol(final.boruta$ImpHistory),function(i)
+  final.boruta$ImpHistory[is.finite(final.boruta$ImpHistory[,i]),i])
+names(lz) = colnames(final.boruta$ImpHistory)
+Labels = sort(sapply(lz,median))
+axis(side = 1,las=2,labels = names(Labels),
+     at = 1:ncol(final.boruta$ImpHistory), cex.axis = 0.7)
+
 
 
