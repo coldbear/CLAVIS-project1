@@ -20,7 +20,7 @@
 # uplift curve
 # html/ javascript code (for embedding)
 
-plot_roccurves <- function(y, yhat,  
+modelselectionfunction <- function(y, yhat,  
   labelround = 2, 
   cutoffs.at = NULL, 
   cutoff.labels = NULL,
@@ -61,12 +61,15 @@ plot_roccurves <- function(y, yhat,
   data = data.frame(y, yhat)
   
   
+  
   ####################       ROC CURVES       ####################
   # plot
   if(ncol == 1){
     
+    # rename column of interet
+    colnames(data)[2] <- "M1"
     # define style
-    basicplot <- ggplot(data, aes(d = y, m = yhat)) + 
+    basicplot <- ggplot(data, aes(d = y, m = M1)) + 
           geom_roc(labelround = 2, 
                    cutoffs.at = NULL, 
                    cutoff.labels = NULL,
@@ -82,26 +85,26 @@ plot_roccurves <- function(y, yhat,
   } else {
     
     # convert data to longform
-    data.longform <- melt_roc(data, data[,1], data[,-1])
+    data.longform <- melt_roc(data, 1, c(2:(ncol+1)))
     
     if(double == TRUE){
       # define style
-      plot <- ggplot(data, aes(aes(d = D, m = M, color = name))) + 
-        geom_roc(labelround = 2, 
-                 cutoffs.at = NULL, 
-                 cutoff.labels = NULL,
-                 show.legend = NA, 
-                 inherit.aes = TRUE) + 
-        facet_wrap(~ name) + 
+      plot <- ggplot(data.longform, aes(d = D, m = M, color = name)) + 
+                geom_roc(labelround = 2, 
+                cutoffs.at = NULL, 
+                cutoff.labels = NULL,
+                show.legend = NA, 
+                inherit.aes = TRUE) + 
+                facet_wrap(~ name) + 
         style_roc(xlab = "False Positive Rate (1 - Specificity)", ylab = "True Positive Rate (Sensitivity)")
     } else{
       # define style
-      plot <- ggplot(data, aes(d = D, m = M, color = name)) + 
-        geom_roc(labelround = 2, 
-                 cutoffs.at = NULL, 
-                 cutoff.labels = NULL,
-                 show.legend = NA, 
-                 inherit.aes = TRUE) + 
+      plot <- ggplot(data.longform, aes(d = D, m = M, color = name)) + 
+                geom_roc(labelround = 2, 
+                cutoffs.at = NULL, 
+                cutoff.labels = NULL,
+                show.legend = NA, 
+                inherit.aes = TRUE) + 
         style_roc(xlab = "False Positive Rate (1 - Specificity)", ylab = "True Positive Rate (Sensitivity)")
       }
 
@@ -110,7 +113,11 @@ plot_roccurves <- function(y, yhat,
     # output code
     code <-  export_interactive_roc(plot)
   }  
-  
+
+  for(i in 1:ncol){
+    optimalcutoff <- optimalCutoff(actuals = y, predictedScores = yhat[,i], optimiseFor = "Both")
+  }
+ 
   
   
   ####################       PRECISION-RECALL CURVES       ####################
@@ -125,13 +132,14 @@ plot_roccurves <- function(y, yhat,
   ####################       UPLIFT CURVES       ####################
   
   for(i in 1:ncol){
-    ks_plot(actuals=y, predictedScores=yhat[,i])
+    ks_plot_i <- ks_plot(actuals=y, predictedScores=yhat[,i])
+    ks_plot_i
   }
   
   
   
   # code for interactive ROC Curve Implementation  
-  return(code)  
+  return(c(code, paste("OptimalCutoff:",optimalcutoff)))
     
   }
   
