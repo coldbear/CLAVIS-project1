@@ -132,10 +132,18 @@ evaluate = function(type,model,modelname,data,actual,pos,neg,threshold,metric) {
 
 #Evaluate the predictions - (Add your responses in the console)
 lr.model <- lm(train$order~.,train)
+rf.model <- readRDS("rfe.train.RDS")
 
 lr.res = evaluate(type = "Classification",
                   model = lr.model,
                   modelname = "Linear Regression",
+                  data = test,actual = test$order,
+                  pos = "yes",neg = "no",
+                  threshold=NULL,metric = NULL)
+
+rf.res = evaluate(type = "Classification",
+                  model = rf.model,
+                  modelname = "Random Forest",
                   data = test,actual = test$order,
                   pos = "yes",neg = "no",
                   threshold=NULL,metric = NULL)
