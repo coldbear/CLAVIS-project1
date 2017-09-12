@@ -139,48 +139,64 @@ print(boruta.df)
 #### Feature Selection########
 ##############################
 #install.packages("Boruta")
+library(caret)
 library(Boruta)
 library(randomForest)
 
 #load saved datasets (can be found on slack: apa)
+
+#boruta.train = Boruta(order~., data = traindata, doTrace = 2)
 boruta.train = readRDS(file = "boruta.train.RDS")
+
+#library(randomForest)
+
+#set.seed(123)
+#control = rfeControl(functions=rfFuncs, method="cv", number=10)
+
+#rfe.train = rfe(traindata[1:51], traindata[,52], sizes=1:12, rfeControl=control)
 rfe.train = readRDS(file = "rfe.train.RDS")
 
-# RF Feature Importance
-plot(rfe.train, type=c("g", "o"), cex = 1.0, col = 1:11)
-
-# Boruta Feature Selection
-print(boruta.train)
-
-# Boruta Tentative
-plot(boruta.train, xlab = "", xaxt = "n")
-lz=lapply(1:ncol(boruta.train$ImpHistory),function(i)
-  boruta.train$ImpHistory[is.finite(boruta.train$ImpHistory[,i]),i])
-names(lz) = colnames(boruta.train$ImpHistory)
-Labels = sort(sapply(lz,median))
-axis(side = 1,las=2,labels = names(Labels),
-     at = 1:ncol(boruta.train$ImpHistory), cex.axis = 0.7)
 
 
-# Boruta Final
-final.boruta = TentativeRoughFix(boruta.train)
-print(final.boruta)
+Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){ 
+  require(Boruta)
+  require(randomForest)
+  
+  if(method == "RF") {
+    #RF Feature Selection
+    x=plot(rfe.train, type=c("g", "o"), cex = 1.0, col = 1:11, Labels = T)
+    return(x)
+  }
+  else if(method == "Boruta_Tentative"){
+    #Tentative Boruta
+    plot(boruta.train,xlab = "", xaxt = "n")
+    lz=lapply(1:ncol(boruta.train$ImpHistory),function(i)
+      boruta.train$ImpHistory[is.finite(boruta.train$ImpHistory[,i]),i])
+    names(lz) = colnames(boruta.train$ImpHistory)
+    Labels = sort(sapply(lz,median))
+    axis(side = 1,las=2,labels = names(Labels),
+         at = 1:ncol(boruta.train$ImpHistory), cex.axis = 0.7)
+  }
+  else if(method == "Boruta_Final"){
+    #Final Boruta
+    final.boruta = TentativeRoughFix(boruta.train)
+    boruta.df = attStats(final.boruta)
+    plot(final.boruta, xlab = "", xaxt = "n")
+    lz=lapply(1:ncol(final.boruta$ImpHistory),function(i)
+      final.boruta$ImpHistory[is.finite(final.boruta$ImpHistory[,i]),i])
+    names(lz) = colnames(final.boruta$ImpHistory)
+    Labels = sort(sapply(lz,median))
+    axis(side = 1,las=2,labels = names(Labels),
+         at = 1:ncol(final.boruta$ImpHistory), cex.axis = 0.7)
+  }
+  else {
+  "Error: Select a valid method"  
+  }
+  }
 
-getSelectedAttributes(final.boruta, withTentative = F)
 
-
-boruta.df = attStats(final.boruta)
-class(boruta.df)
-print(boruta.df)
-
-
-plot(final.boruta, xlab = "", xaxt = "n")
-lz=lapply(1:ncol(final.boruta$ImpHistory),function(i)
-  final.boruta$ImpHistory[is.finite(final.boruta$ImpHistory[,i]),i])
-names(lz) = colnames(final.boruta$ImpHistory)
-Labels = sort(sapply(lz,median))
-axis(side = 1,las=2,labels = names(Labels),
-     at = 1:ncol(final.boruta$ImpHistory), cex.axis = 0.7)
-
+Select_Features(method = "RF")
+Select_Features(method = "Boruta_Tentative")
+Select_Features(method = "Boruta_Final")
 
 
