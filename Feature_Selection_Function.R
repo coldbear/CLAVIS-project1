@@ -149,10 +149,8 @@ library(randomForest)
 boruta.train = readRDS(file = "boruta.train.RDS")
 
 #library(randomForest)
-
 #set.seed(123)
 #control = rfeControl(functions=rfFuncs, method="cv", number=10)
-
 #rfe.train = rfe(traindata[1:51], traindata[,52], sizes=1:12, rfeControl=control)
 rfe.train = readRDS(file = "rfe.train.RDS")
 
