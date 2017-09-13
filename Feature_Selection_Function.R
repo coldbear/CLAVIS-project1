@@ -88,6 +88,14 @@ rm(fold_1)
 rm(x)
 
 
+#set.seed(223)
+#idx_2 = createDataPartition(y = traindata$order, p = 0.7, list = FALSE)
+#train = traindata[idx_2,]
+#test = traindata[-idx_2,]
+rf.model = readRDS(file = "rfe.train.RDS")
+
+
+
 
 ## Feature Selection/Importance with RF
 #install.packages("randomForest")
