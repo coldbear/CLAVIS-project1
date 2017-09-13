@@ -84,7 +84,7 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
 
 # Evaluation function 
 
-evaluate = function(type,model,modelname,data,actual,pos,neg,threshold) {
+evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
   
   #Loading packages
   if (!require("e1071")) install.packages("e1071"); library("e1071")
@@ -125,9 +125,7 @@ evaluate = function(type,model,modelname,data,actual,pos,neg,threshold) {
 lr.model <- lm(train$order~.,train)
 
 
-lr.res = evaluate(type = "Classification", # choose from Classification or Regression
-                  
-                  model = lr.model, # Input model for evaluation
+lr.res = evaluate(model = lr.model, # Input model for evaluation
                   
                   modelname = "Linear Regression", # Specify the model name 
                                                    #that is evaluated
