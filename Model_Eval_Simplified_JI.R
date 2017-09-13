@@ -48,18 +48,18 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   print(error)
 
   # Error decomposition
-  # mse = mean((actual - pred)^2)
-  # bias = (mean(pred) - mean(actual))
-  # var = mse - (bias^2) #(Decomposition of mse)
-  # percent.var = var/mse
-  # actual.skew = skewness(actual)  # to check the distributions
-  # predicted.skew = skewness(pred)
+  mse = mean((revenue.actual - revenue.pred)^2)
+  bias = (mean(revenue.pred) - mean(revenue.actual))
+  var = mse - (bias^2) #(Decomposition of mse)
+  percent.var = var/mse
+  actual.skew = skewness(revenue.actual)  # to check the distributions
+  predicted.skew = skewness(revenue.pred)
 
   # Saving results
 
-  # error.matrix = cbind(error, mse, bias,var,percent.var,actual.skew, predicted.skew)
-  # cat("\n", "Decomposing the error : ", "\n")
-  # print(error.matrix)
+  error.matrix = cbind(error, mse, bias,var,percent.var,actual.skew, predicted.skew)
+  cat("\n", "Decomposing the error : ", "\n")
+  print(error.matrix)
 
   # Visualization - Plotting the normal curve
   x1 = revenue.actual
@@ -131,7 +131,7 @@ lr.res = evaluate(model = lr.model, # Input model for evaluation
                                                    #that is evaluated
                   data = test,actual = test$order, #Specify the test set to use 
                                                    #and the target variable for reference
-                  pos = 1,neg = 0, #Type the positive and the negative levels 
+                  pos = "yes",neg = "no", #Type the positive and the negative levels 
                                    #in the target variable eg. 1,0 or good,bad
                   threshold="Mean" #choose from c("Random","Mean","Median","3quad",
                                   #user -should be a numeric threshold value)
@@ -139,8 +139,7 @@ lr.res = evaluate(model = lr.model, # Input model for evaluation
 
 #rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
 # dataset used for training and testing should match 
-rf.res = evaluate(type = "Classification",
-                  model = rf.model,
+rf.res = evaluate(model = rf.model,
                   modelname = "Random Forest",
                   data = test,actual = test$order,
                   pos = 1,neg = 0,
