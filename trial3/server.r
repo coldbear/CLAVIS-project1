@@ -25,7 +25,7 @@ boruta.train = readRDS(file = "boruta.train.RDS")
 rfe.train = readRDS(file = "rfe.train.RDS")
 
 #Load  functionality
-source("vaselection.r")
+source("varselection.r")
 varimp <- function(model) {
   varImpPlot(model, type = 2)
 }
