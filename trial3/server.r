@@ -4,17 +4,17 @@
 ############################################################
 
 #Libraries
-library(shiny)
-library(caret)
-library(randomForest)
-library(ICEbox)
-library(psych)
-library(caret)
-library(Boruta)
-library(ggplot2)
-library(plotROC)
-library(InformationValue)
-library(PRROC)
+if(!require("shiny")) install.packages("shiny"); library("shiny")
+if(!require("randomForest")) install.packages("randomForest"); library("randomForest")
+if(!require("ICEbox")) install.packages("ICEbox"); library("ICEbox")
+if(!require("psych")) install.packages("psych"); library("psych")
+if(!require("caret")) install.packages("caret"); library("caret")
+if(!require("Boruta")) install.packages("Boruta"); library("Boruta")
+if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
+if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
+if(!require("InformationValue")) install.packages("InformationValue"); library("InformationValue")
+if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
+
 #library(maps)
 #library(mapproj)
 #setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
