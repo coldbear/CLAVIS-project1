@@ -34,7 +34,8 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
     print(confmat)
     cmplot <- fourfoldplot(confmat$table, color = c("#0000FF","#FF0000"),
                                   conf.level = 0, margin = 1,main =paste0("Threshold value - ",name) )
-  }else{print("classification has only one level"); break}
+  }
+  #else{print("classification has only one level"); break}
   
   #Calculate rsse
   revenue.actual <- test$price*(as.numeric(test$order)-1)
@@ -90,7 +91,7 @@ evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
   if (!require("e1071")) install.packages("e1071"); library("e1071")
   if (!require("randomForest")) install.packages("randomForest"); library("randomForest")
   
-    probabilities = predict(model, newdata = data)
+    probabilities = predict(model, newdata = data,type = "prob")[,2]
     stats = summary(probabilities)
     print("Descriptive statistics for the prediction probabilities : ")
     print(stats)
