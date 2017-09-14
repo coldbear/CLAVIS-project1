@@ -13,7 +13,7 @@ Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){
   }
   else if(method == "Boruta_Tentative"){
     #Tentative Boruta
-    plot(boruta.train,xlab = "", xaxt = "n")
+    plot(boruta.train, xlab = "", xaxt = "n")
     lz=lapply(1:ncol(boruta.train$ImpHistory),function(i)
       boruta.train$ImpHistory[is.finite(boruta.train$ImpHistory[,i]),i])
     names(lz) = colnames(boruta.train$ImpHistory)
@@ -38,4 +38,3 @@ Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){
   }
 }
 
-Select_Features(method = "Boruta_Tentative")
