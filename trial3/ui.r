@@ -43,7 +43,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
     h2("PR Curve"),
     plotOutput("prcurve")),
     h2("Lift Curve"),
-    plotOutput("liftcurve", width = "70%")
+    plotOutput("liftcurve")
   
   ),
                    
@@ -65,9 +65,12 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
            
   titlePanel("Jay"), 
   
-  sidebarPanel(h1 ("Select parameters")),
+  sidebarPanel(h1 ("Png for now, will be  for realz")),
   
-  mainPanel(p("Here goes evaluation"), plotOutput("stuff"))
+  mainPanel(h2("Confusion matrix"), 
+            img(src = "Rplot.png"),
+            h2("Error deconmposition"),
+            img(src = 'rplot01.png'))
   
   ),
                    
@@ -79,7 +82,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   titlePanel("Looking into 'black box'"), 
   
   mainPanel(
-    p("Graphs are loading, give it time, the progress bar will  be added)"), 
+    p("Graphs are loading, give it some time"), 
     h2("Variable Importance plot"),
     plotOutput("varimp"), 
     h2("Partial Dependance Plots of most important variables"),

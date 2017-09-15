@@ -5,8 +5,9 @@
 #################################################################### 
 # Set the working directory 
 # Uncomment these lines to set the working directory to the current file's location
-# if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 
 
 # Evaluation metric
@@ -82,13 +83,6 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
 }
 
 # Evaluation function 
-#rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
-# dataset used for training and testing should match 
-#                  modelname = "Random Forest",
-#                data = test,actual = test$order,
-#               pos = 1,neg = 0,
-#           threshold="Mean")
-
 
 evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
   
@@ -127,11 +121,9 @@ evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
 }
 
 
+rf.res = evaluate(model = rf.model,
+                  modelname = "Random Forest",
+                  data = test,actual = test$order,
+                  pos = 1,neg = 0,
+                  threshold="Mean")
 
-#rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
-# dataset used for training and testing should match 
-#                  modelname = "Random Forest",
-  #                data = test,actual = test$order,
-   #               pos = 1,neg = 0,
-       #           threshold="Mean")
-#
