@@ -15,13 +15,17 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   sidebarPanel(
     p("The  application comes with pre-loaded dataset from APA and trained RandomForest Model"),
-    numericInput(inputId = "obs",min = 1, max = 40, step = 2,label = "Number of observations to view:",value = 10)
+    numericInput(inputId = "obs",min = 1, max = 40, step = 1,label = "Number of observations to view:",value = 5)
     ),
   
   mainPanel(
+    h2("Data Overview"),
     tableOutput("datatable"), 
-    p("Model Summary"),
-    verbatimTextOutput("summary"))
+    
+ #   h2("Data Summary"),
+ #   verbatimTextOutput("summarydata"),
+    h2("Model Summary"),
+    verbatimTextOutput("summarymodel"))
   ),
                    
                    #####MODEL SELECTION TAB#####
@@ -30,25 +34,25 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
            
   titlePanel("Model Selection"), 
   
-  sidebarPanel(h1("Description of curves")),
+  sidebarPanel(p("This tab offers three visualizations that are aiming to...")),
   
   mainPanel(
-    h1("ROC Curve"),
+    h2("ROC Curve"),
     verbatimTextOutput("cutoffpoint"), 
     plotOutput("roccurve"),
-    h1("PR Curve"),
+    h2("PR Curve"),
     plotOutput("prcurve")),
-    h1("Lift Curve"),
-    plotOutput("liftcurve")
+    h2("Lift Curve"),
+    plotOutput("liftcurve", width = "70%")
   
-   ),
+  ),
                    
                    #####VARIABLE SELECTION TAB#####
   tabPanel("Variable Selection",
             
   titlePanel("Variable Selection"), 
   
-  sidebarPanel(selectInput(inputId = "method", label ="Select method:", choices = c("RF", "Boruta_Tentative", "Boruta_Final"))
+  sidebarPanel(selectInput(inputId = "method", label ="Select method:", choices = c("RF", "Boruta_Tentative","Boruta_Final"))
    ), 
   
   mainPanel(p("Here goes the result"), plotOutput("vs"))
@@ -63,7 +67,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   sidebarPanel(h1 ("Select parameters")),
   
-  mainPanel(p("Here goes evaluation"), plotOutput("STUFF"))
+  mainPanel(p("Here goes evaluation"), plotOutput("stuff"))
   
   ),
                    
@@ -72,9 +76,15 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   tabPanel("Interpretation",
            
-  titlePanel("Let's take a look into 'black box'"), 
+  titlePanel("Looking into 'black box'"), 
   
-  mainPanel(p("Here goes the data exploration (it's loading, give it time, the progress bar will  be added)"), plotOutput("varimp"), plotOutput("pdp")
-                                      
+  mainPanel(
+    p("Graphs are loading, give it time, the progress bar will  be added)"), 
+    h2("Variable Importance plot"),
+    plotOutput("varimp"), 
+    h2("Partial Dependance Plots of most important variables"),
+    plotOutput("pdp"),
+    h2("ICEbox plots"),
+    plotOutput("ice")
                                       
   ))))

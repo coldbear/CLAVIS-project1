@@ -5,12 +5,6 @@
 
 
 
-#Load data (!)
-#data <- readRDS("fold_1_b2.rds")
-boruta.train<- readRDS("boruta.train.RDS")
-rfe.train <- readRDS("rfe.train.RDS")
-data <- readRDS("alt")
-rf.model <- readRDS("rfmodel")
 
 #Libraries
 if(!require("shiny")) install.packages("shiny"); library("shiny")
@@ -23,10 +17,16 @@ if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
 if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
 if(!require("InformationValue")) install.packages("InformationValue"); library("InformationValue")
 if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
-if(!require("DT")) install.packages("DT"); library("DT")
+
 
 
 #setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
+
+#Load data 
+data <- readRDS("workset")
+rf.model <- readRDS("rf.model")
+test <- readRDS("test")
+train <- readRDS("train")
 
 
 
@@ -35,7 +35,9 @@ if(!require("DT")) install.packages("DT"); library("DT")
 source("modelselection.r")
 source("varselection.r")
 #source("evaluation.r")
-#source("interpretation.r")
+source("interpretation.r")
+
+
 
 #Start of server function
 
@@ -48,10 +50,14 @@ server <- function(input, output) {
   head(data, n = input$obs)
 })
   
+# Generate a summary of the preloaded dataset
+  
+output$summarydata <- renderPrint({
+    summary(data)
+  })
 # Generate a summary of the preloaded model
-output$summary <- renderPrint({
-  model = rf.model
-  summary(model)
+output$summarymodel <- renderPrint({
+  rf.model
 })
 
            #####MODEL SELECTION TAB#####
@@ -86,10 +92,13 @@ output$vs <- renderPlot({
             #####INTERPRETATION TAB#####
 
   output$varimp <- renderPlot({
-    varimp(model)
+    varimp(rf.model)
   })
   output$pdp <- renderPlot({
-    pdp (model,data)
+    pdp (rf.model,data)
+  })
+  output$ice <- renderPlot({
+    ice(icepid,iceprice)
   })
 }
 

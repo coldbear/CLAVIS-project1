@@ -23,7 +23,6 @@
 
 
 # ROC CURVE
-#create_roccurve("order", rf.model, test)
 create_roccurve <- function(y = "order", model, test){
   
   # load package
@@ -84,7 +83,7 @@ create_roccurve <- function(y = "order", model, test){
 
 
 # PRECISION-RECALL CURVE
-create_prcurve("order", rf.model, test)
+#create_prcurve("order", model, test)
 create_prcurve <- function(y = "order", model, test){
   
   # load package
@@ -117,7 +116,7 @@ create_prcurve <- function(y = "order", model, test){
   data = data.frame(y, yhat)  
   
   # plot
-  pr.curve(scores.class0 = yhat, weights.class0 = y, curve = TRUE) 
+  plot(pr.curve(scores.class0 = yhat, weights.class0 = y, curve = TRUE) )
   
   
 }  
