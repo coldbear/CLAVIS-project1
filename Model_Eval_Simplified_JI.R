@@ -123,27 +123,12 @@ evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
 
 
 #Evaluate the predictions - (Add your responses in the console)
-lr.model <- lm(train$order~.,train)
+#use an rf model specific to the train set,dataset used for training and testing should match 
 
 
-lr.res = evaluate(model = lr.model, # Input model for evaluation
-                  
-                  modelname = "Linear Regression", # Specify the model name 
-                                                   #that is evaluated
-                  data = test,actual = test$order, #Specify the test set to use 
-                                                   #and the target variable for reference
-                  pos = "yes",neg = "no", #Type the positive and the negative levels 
-                                   #in the target variable eg. 1,0 or good,bad
-                  threshold="Mean" #choose from c("Random","Mean","Median","3quad",
-                                  #user -should be a numeric threshold value)
-                  )
-
-#rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
-# dataset used for training and testing should match 
 rf.res = evaluate(model = rf.model,
                   modelname = "Random Forest",
                   data = test,actual = test$order,
                   pos = 1,neg = 0,
                   threshold="Mean")
-
 
