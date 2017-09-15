@@ -192,6 +192,6 @@ evaluate = function(model,modelname,data, actual) {
 #Evaluate the predictions - (Add your responses in the console)
 ndata <- readRDS("fold_1_b2.rds")
 lr.model <- lm(train$order~.,train)
-lr.res = evaluate(lr.model,"Linear Regression",test,test$order)
+lr.res = evaluate(rf,"rf",x_test,y_test)
 
 
