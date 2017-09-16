@@ -24,7 +24,7 @@
 
 # ROC CURVE
 
-create_roccurve <- function(y = "order", model, test, CBTN = 0, CBFN = -1, CBFP = -1, CBTP = 0, plot){
+create_plots <- function(y = "order", model, train, test, CBTN = 0, CBFN = -1, CBFP = -1, CBTP = 0, plot){
   
   ################## LOAD PACKAGE ##################### 
   
@@ -62,7 +62,7 @@ create_roccurve <- function(y = "order", model, test, CBTN = 0, CBFN = -1, CBFP 
   ################### ROC CURVE ########################
   ######################################################
 
-  if(plot == "ROC"){
+  if(plot == "ROC-Curve"){
     # define style
     basicplot <- ggplot(data, aes(d = y, m = yhat)) + 
       geom_roc(labelround = 2, 
@@ -123,7 +123,7 @@ create_roccurve <- function(y = "order", model, test, CBTN = 0, CBFN = -1, CBFP 
     ####### RETURN #######
     return(c(paste("OptimalCutoff:",optimalcutoff), paste("AUC:", auc)))
   
-  } else if(plot == "PR"){
+  } else if(plot == "PR-Curve"){
   
 
   ######################################################
@@ -133,7 +133,7 @@ create_roccurve <- function(y = "order", model, test, CBTN = 0, CBFN = -1, CBFP 
   # plot
   pr.curve(scores.class0 = yhat, weights.class0 = y, curve = TRUE) 
   
-  } else{ 
+  } else if(plot == "Uplift-Curve"){ 
   
   
   ######################################################
