@@ -174,3 +174,9 @@ rf.res = evaluate(model = rf.model,
 rf.model <- readRDS("rf.model.ji.RDS")
 test <- readRDS("test2")
 
+require(stats)
+glmout <- capture.output(evaluate(model = rf.model,
+                                           modelname = "Random Forest",
+                                           data = test,actual = test$order,
+                                           pos = 1,neg = 0,
+                                           threshold="Mean"))
