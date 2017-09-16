@@ -129,3 +129,9 @@ high.decompose <- error_decomposition(actual=res.high$revenue.actual,
                                       "high",sqerror,t_name)
 
 
+require(stats)
+glmout <- capture.output(evaluate(model = rf.model,
+                                           modelname = "Random Forest",
+                                           data = test,actual = test$order,
+                                           pos = 1,neg = 0,
+                                           threshold="Mean"))
