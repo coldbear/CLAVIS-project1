@@ -9,7 +9,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 #### Note : For the rsse decomposition to work the dataset needs to have the price variable
-library(caret)
+
 
 # Evaluation metric
 user <- function(actual, pred) {
@@ -30,10 +30,10 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   print("Confusion Matrix")
   
   if(length(levels(pred))>1){
-    confmat<- confusionMatrix(actual,pred)
+    confmat <-confusionMatrix(actual,pred)
     print(confmat)
-    cmplot <- fourfoldplot(confmat$table, color = c("#0000FF","#FF0000"),
-                                  conf.level = 0, margin = 1,main =paste0("Threshold value - ",name) )
+    cmplot <- fourfoldplot(table(confmat), color = c("#0000FF","#FF0000"),
+                                  conf.level = 0, margin = 1,main =paste0("Threshold value - ",name))
   }
   #else{print("classification has only one level"); break}
   
@@ -122,22 +122,6 @@ evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
 }
 
 
-#Evaluate the predictions - (Add your responses in the console)
-lr.model <- lm(train$order~.,train)
-
-
-lr.res = evaluate(model = lr.model, # Input model for evaluation
-                  
-                  modelname = "Linear Regression", # Specify the model name 
-                                                   #that is evaluated
-                  data = test,actual = test$order, #Specify the test set to use 
-                                                   #and the target variable for reference
-                  pos = "yes",neg = "no", #Type the positive and the negative levels 
-                                   #in the target variable eg. 1,0 or good,bad
-                  threshold="Mean" #choose from c("Random","Mean","Median","3quad",
-                                  #user -should be a numeric threshold value)
-                  )
-
 #rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
 # dataset used for training and testing should match 
 rf.res = evaluate(model = rf.model,
@@ -146,4 +130,6 @@ rf.res = evaluate(model = rf.model,
                   pos = 1,neg = 0,
                   threshold="Mean")
 
+rf.model <- readRDS("rf.model.ji.RDS")
+test <- readRDS("test2")
 

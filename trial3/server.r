@@ -88,12 +88,13 @@ output$vs <- renderPlot({
 
 
 
-
             #####INTERPRETATION TAB#####
 
   output$varimp <- renderPlot({
+      
     varimp(rf.model)
   })
+
   output$pdp <- renderPlot({
     pdp (rf.model,data)
   })
