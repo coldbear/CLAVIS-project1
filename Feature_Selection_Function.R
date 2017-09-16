@@ -88,12 +88,12 @@ rm(fold_1)
 rm(x)
 
 
-#set.seed(223)
-#idx_2 = createDataPartition(y = traindata$order, p = 0.7, list = FALSE)
-#train = traindata[idx_2,]
-#test = traindata[-idx_2,]
+set.seed(223)
+idx_2 = createDataPartition(y = traindata$order, p = 0.7, list = FALSE)
+train = traindata[idx_2,]
+test = traindata[-idx_2,]
 rf.model = readRDS(file = "rfe.train.RDS")
-
+rf.model = lm(formula = order~.,data = train)
 
 
 
@@ -204,5 +204,27 @@ Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){
 Select_Features(method = "RF")
 Select_Features(method = "Boruta_Tentative")
 Select_Features(method = "Boruta_Final")
+
+
+#RF Feature Importance#
+#The plot shows how the RMSE changes as we increase the number of variables,
+# the variables corresponding to the lowest RMSE are "selected" and can 
+# be found using the "predictors" function.
+
+
+#TENTATIVE BORUTA EXPLANATION#
+#Blue boxplots correspond to minimal, average and maximum Z score of a 
+#shadow attribute. Red, yello and green boxplots represent Z scores of
+#respectively rejected, tentatively confirmed and confirmed attributes.
+
+## SOURCE: (Kursa and Rudnicki, 2010)
+
+# FINAL BORUTA EXPLANATION#
+
+# Blue boxplots correspond to minimum, average and maximum Z score of a 
+# shadow attribute. Red and green boxplots represent Z scores of
+# respectively rejected and confirmed attributes#
+
+## SOURCE: (Kursa and Rudnicki, 2010)
 
 

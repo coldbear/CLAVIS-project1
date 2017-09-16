@@ -24,12 +24,20 @@ pdp <- function(model, data) {
 }
 
 #Now ICEbox  function
-icepid <- readRDS("icepid")
-iceprice <- readRDS("iceprice")
-ice<- function(ice1, ice2){
-d <- plot(ice1, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1, centered = TRUE)
-e <- plot(ice2, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1, centered = TRUE)
-return(list(d,e))
-}
+pidICEbox <- readRDS("icepid")
+priceICEbox<- readRDS("iceprice")
+#group-ICEbox <- readRDS("icegroup")
 
- 
+ice<- function(icemodel){
+plot(icemodel, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1, centered = TRUE)
+}
+#group.ice = ice(rf.ice, x_train, predictor = "group", logodds = TRUE,
+#                     predictfcn = function(object, newdata){
+#                       predict(object, newdata, type = "prob")[, 2]
+ #                        } )
+
+
+
+#plot(group.order.ice, frac_to_plot = 1, prop_range_y = TRUE,
+ #    x_quantile = T, plot_orig_pts_preds = T, color_by = "group")
+#rf.ice <- randomForest(x_train, y_train)

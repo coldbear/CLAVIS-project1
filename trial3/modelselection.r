@@ -70,10 +70,13 @@ create_roccurve <- function(y = "order", model, test){
   #plot_interactive_roc(basicplot) #this is the initial line
   plot(basicplot)
   
- optimalcutoff <- optimalCutoff(actuals = y, predictedScores = yhat, optimiseFor = "Both")
+  # Optimal Cutoff
+  optimalcutoff <- optimalCutoff(actuals = y, predictedScores = yhat, optimiseFor = "Both")
+  # AUC
+  auc <- round(calc_auc(basicplot)$AUC, 2)
   
   # code for interactive ROC Curve Implementation  
- return(paste("OptimalCutoff:",optimalcutoff))
+  return(c(paste("OptimalCutoff:",optimalcutoff), paste("AUC:", auc)))
   
 }  
 

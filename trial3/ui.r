@@ -15,15 +15,14 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   sidebarPanel(
     p("The  application comes with pre-loaded dataset from APA and trained RandomForest Model"),
-    numericInput(inputId = "obs",min = 1, max = 40, step = 1,label = "Number of observations to view:",value = 5)
+    numericInput(inputId = "obs",min = 1, max = 40, step = 1,label = "Number of observations to view:",value = 3)
     ),
   
   mainPanel(
     h2("Data Overview"),
     tableOutput("datatable"), 
-    
- #   h2("Data Summary"),
- #   verbatimTextOutput("summarydata"),
+    plotOutput("exploration1"),
+    plotOutput("exploration2"),
     h2("Model Summary"),
     verbatimTextOutput("summarymodel"))
   ),
@@ -52,27 +51,39 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
             
   titlePanel("Variable Selection"), 
   
-  sidebarPanel(selectInput(inputId = "method", label ="Select method:", choices = c("RF", "Boruta_Tentative","Boruta_Final"))
+  sidebarPanel(selectInput(
+    inputId = "method", label ="Select method:", choices = c("RF", "Boruta_Tentative","Boruta_Final")),
+    h2("RF variable selection"),
+    p("The plot shows how the RMSE changes as we increase the number of variables,the variables corresponding to the lowest RMSE are 'selected' and can be found using the 'predictors' function."),
+    h2("Tentative Boruta Explanation"),
+    p("Blue boxplots correspond to minimal, average and maximum Z score of a 
+        shadow attribute. Red, yello and green boxplots represent Z scores of
+      respectively rejected, tentatively confirmed and confirmed attributes."),
+    h2("Final Boruta Explanation"),
+    p("Blue boxplots correspond to minimum, average and maximum Z score of a 
+        shadow attribute. Red and green boxplots represent Z scores of
+    respectively rejected and confirmed attributes")
    ), 
   
-  mainPanel(p("Here goes the result"), plotOutput("vs"))
-   ),
+  mainPanel(
+    plotOutput("vs",  width = "100%", height = "800px")
+   )),
                    
                    
                    #####EVALUATION TAB#####
   
   tabPanel("Evaluation",
            
-  titlePanel("Jay"), 
+  titlePanel("Model  Evaluation"), 
   
-  sidebarPanel(h1 ("Png for now, will be  for realz")),
+ sidebarPanel(selectInput(inputId = "evalthresh", label ="Select threshold:", choices = c("Random", "Mean", "Median", "3quad"))
+           ),
   
-  mainPanel(h2("Confusion matrix"), 
-            img(src = "Rplot.png"),
-            h2("Error deconmposition"),
-            img(src = 'rplot01.png'))
-  
+  mainPanel(h2("Confusion matrix and error decompositon"), 
+            plotOutput("eval"),
+            verbatimTextOutput("evaloutput"))
   ),
+
                    
                    
                    #####INTERPRETATION TAB#####
@@ -81,6 +92,9 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
            
   titlePanel("Looking into 'black box'"), 
   
+  sidebarPanel(selectInput(inputId = "icevar", label ="Select ICEbox graph:", choices = c("pidICEbox", "priceICEbox"))),
+  
+  
   mainPanel(
     p("Graphs are loading, give it some time"), 
     h2("Variable Importance plot"),
@@ -88,6 +102,8 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
     h2("Partial Dependance Plots of most important variables"),
     plotOutput("pdp"),
     h2("ICEbox plots"),
-    plotOutput("ice")
-                                      
-  ))))
+    plotOutput("ice"))
+  )
+ )
+)
+  

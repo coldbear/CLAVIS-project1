@@ -1,16 +1,20 @@
 
-smp_size <- floor(0.7* nrow(data))
+original <- readRDS("olddata")
 
-saveRDS(test, "test")
-saveRDS(train, "train")
-## set the seed to make your partition reproductible
-set.seed(123)
-idx <- createDataPartition(data$order,p = 0.7, list = FALSE)
+explora1 <- function(orignal, train){
+# Correlation scatterplots 
+
+ggplot(original, aes(x=original$price, y=original$price-original$competitorPrice)) + 
+  geom_point(aes(col=original$order, size=original$revenue)) + 
+  labs(y="Price - Competitor price", 
+       x="Price ", 
+       title="Effect of difference in prices on revenue")
+}
+
+explora2 <- function(train){
+pairs(train[,c(1,3,4,5,8)],col=train$order)
+}
+#e <- scatter.smooth(train$price,train$order)
 
 
-train <- data[idx, ]
-test <- data[-idx, ]
 
-rf.model <- randomForest(order~., data=train, ntree=1000, mtry=6, importance=TRUE)
-rf.model
-saveRDS(rf.model, "rf.model")
