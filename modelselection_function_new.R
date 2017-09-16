@@ -24,11 +24,14 @@
 
 # ROC CURVE
 
-create_roccurve <- function(y = "order", model, test){
+create_roccurve <- function(y = "order", model, test, CBTN = 0, CBFN = -1, CBFP = -1, CBTP = 0, plot){
   
-  # load package
+  ################## LOAD PACKAGE ##################### 
+  
   if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
   if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
+  if(!require("OptimalCutpoints")) install.packages("OptimalCutpoints"); library("OptimalCutpoints")
+  
   
   ################## PREPARE DATA #####################
   
@@ -55,9 +58,11 @@ create_roccurve <- function(y = "order", model, test){
   # combine predictions & true value in a data frame
   data = data.frame(y, yhat)
   
-  
-  ################## ROC CURVE #####################
+  ######################################################
+  ################### ROC CURVE ########################
+  ######################################################
 
+  if(plot == "ROC"){
     # define style
     basicplot <- ggplot(data, aes(d = y, m = yhat)) + 
       geom_roc(labelround = 2, 
@@ -70,107 +75,76 @@ create_roccurve <- function(y = "order", model, test){
     # output interactive plot
     plot_interactive_roc(basicplot)
 
-  # Optimal Cutoff
-  optimalcutoff <- optimalCutoff(actuals = y, predictedScores = yhat, optimiseFor = "Both")
-  # AUC
-  auc <- round(calc_auc(basicplot)$AUC, 2)
   
-  # code for interactive ROC Curve Implementation  
-  return(c(paste("OptimalCutoff:",optimalcutoff), paste("AUC:", auc)))
+  ################## OPTIMAL CUTOFF #####################  
+    
+    ####### COST MATRIX #######  
+    
+    # calculate costs with 0 on diagonals
+    CFN = CBFN - CBTP
+    CFP = CBFP - CBTN
+    
+    # build cost-matrix
+    cost.matrix <- matrix(c(
+      0, CFN,
+      CFP, 0),
+      2, 2, byrow=TRUE)
+    
+    # name rows and columns
+    colnames(cost.matrix) <- list("false", "true")
+    rownames(cost.matrix) <- list("prediction: false", "prediction: true")
+    
+    
+    ####### OPTIMAL CUTOFF ####### 
+    
+    # MODEL.CONTROL
+    # Method: maxKappa
+    model.control.optc = control.cutpoints(CFP = -cost.matrix[2,1], CFN = -cost.matrix[1,2], costs.ratio = -cost.matrix[2,1]/-cost.matrix[1,2], weighted.Kappa = TRUE)
+   
+    # RUN OPTIMAL CUTPOINTS
+    oc = optimal.cutpoints(
+      X = yhat, 
+      status = "order", 
+      tag.healthy = "0", 
+      methods = "MCT", 
+      data = test, 
+      control = model.control.optc)
+    
+    # SELECT OPTIMAL CUTPOINT (compute average, if oc not unique)
+    # define temporary dataframe to store cutoffs 
+    df <- data.frame(cutoff = oc$MCT$Global$optimal.cutoff$cutoff)
+    # calculate average
+    optimalcutoff <- mean(df$cutoff)
+   
+   
+    ####### AUC ####### 
+    auc <- round(calc_auc(basicplot)$AUC, 2)
   
-}  
+    ####### RETURN #######
+    return(c(paste("OptimalCutoff:",optimalcutoff), paste("AUC:", auc)))
   
-optimalcutoff <- optimalCutoff(actuals = y, predictedScores = yhat, optimiseFor = "Both")
+  } else if(plot == "PR"){
+  
 
-# code for interactive ROC Curve Implementation  
-return(paste("OptimalCutoff:",optimalcutoff))
-####################################################################################################
-####################################################################################################
-####################################################################################################
+  ######################################################
+  ########## PRECISION-RECALL CURVE ####################
+  ######################################################
 
-
-# PRECISION-RECALL CURVE
-  
-create_prcurve <- function(y = "order", model, test){
-  
-  # load package
-  if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
-  if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
-  
-  ################## PREPARE DATA #####################
-  
-  # check test dataset
-  if(!is.data.frame(test)){
-    stop("test must be a data frame")
-  }
-  if(!y %in% colnames(test)){
-    stop("test must contain target variable")
-  }
-  
-  y <- as.numeric(test[,y])-1
-  # check if target is numeric with values {0,1}
-  if(!is.numeric(y)){
-    stop("y must be numeric")
-  } 
-  if(!(y == 0 || y ==1)){
-    stop("y must be either 0 or 1")
-  }
-  
-  # generate predictions
-  yhat <- predict(model, newdata = test, type = "prob")[,2]
-  
-  # combine predictions & true value in a data frame
-  data = data.frame(y, yhat)  
-  
   # plot
   pr.curve(scores.class0 = yhat, weights.class0 = y, curve = TRUE) 
   
+  } else{ 
   
-}  
   
-  
-####################################################################################################
-####################################################################################################
-####################################################################################################
+  ######################################################
+  ###############    UPLIFT CURVE   ####################
+  ######################################################
 
 
-# UPLIFT CURVES
-
-create_prcurve <- function(y = "order", model, test){
-  
-  # load package
-  if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
-  if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
-  
-  ################## PREPARE DATA #####################
-  
-  # check test dataset
-  if(!is.data.frame(test)){
-    stop("test must be a data frame")
-  }
-  if(!y %in% colnames(test)){
-    stop("test must contain target variable")
-  }
-  
-  y <- as.numeric(test[,y])-1
-  # check if target is numeric with values {0,1}
-  if(!is.numeric(y)){
-    stop("y must be numeric")
-  } 
-  if(!(y == 0 || y ==1)){
-    stop("y must be either 0 or 1")
-  }
-  
-  # generate predictions
-  yhat <- predict(model, newdata = test, type = "prob")[,2]
-  
-  # combine predictions & true value in a data frame
-  data = data.frame(y, yhat)  
-  
   # plot
   ks_plot(actuals=y, predictedScores=yhat)
-
-}  
+  }
+}
   
 
 
