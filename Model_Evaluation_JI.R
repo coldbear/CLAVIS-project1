@@ -19,6 +19,11 @@ rmse = function(actual, pred) {
   return(error)
 }
 
+user <- function(actual, pred) {
+  rsse = sqrt(sum((actual - pred)^2))
+  return(rsse)
+}
+
 # Interactive evaluation function 
 evaluate = function(model,modelname,data, actual) {
   
@@ -34,10 +39,10 @@ evaluate = function(model,modelname,data, actual) {
     stop("Choose an appropriate method. Check for typos!")}
   if (type == "Classification") {
     
-    classifier = readline(prompt = "Type in the name of the classifier : (eg. lr, xgb)")
+    classifier = readline(prompt = "Type in the name of the classifier : (eg. lr, xgb)  ")
     
     if (classifier == "lr") {
-      probabilities = predict(model, newdata = data)
+      probabilities = predict(model, newdata = data,type="terms")
     } else {
       probabilities = predict(model, newdata = data)
     }
@@ -46,8 +51,8 @@ evaluate = function(model,modelname,data, actual) {
     print("Descriptive statistics for the prediction probabilities : ")
     print(stats)
     
-    pos<- "yes"
-    neg <- "no"
+    pos <- readline(prompt = "Enter the positive level of target variable : ")
+    neg <- readline(prompt = "Enter the negative level of target variable : ")
     
     threshold = readline(prompt = "Do you want to use a specific threshold for classification?
                          Type in the numerical threshold value if not type 'no'")
@@ -192,6 +197,6 @@ evaluate = function(model,modelname,data, actual) {
 #Evaluate the predictions - (Add your responses in the console)
 ndata <- readRDS("fold_1_b2.rds")
 lr.model <- lm(train$order~.,train)
-lr.res = evaluate(rf,"rf",x_test,y_test)
+lr.res = evaluate(lr.model,"Linear Regression",test,test$order)
 
 
