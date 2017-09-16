@@ -9,7 +9,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 #### Note : For the rsse decomposition to work the dataset needs to have the price variable
-library(caret)
+
 
 # Evaluation metric
 user <- function(actual, pred) {
@@ -30,11 +30,18 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   print("Confusion Matrix")
   
   if(length(levels(pred))>1){
-    confmat<- confusionMatrix(actual,pred)
+    confmat <-confusionMatrix(actual,pred)
     print(confmat)
+<<<<<<< HEAD
     cmplot <- fourfoldplot(confmat$table, color = c("#0000FF","#FF0000"),
                                   conf.level = 0, margin = 1,main =paste0("Threshold value - ",name) )
   }else{print("classification has only one level"); break}
+=======
+    cmplot <- fourfoldplot(table(confmat), color = c("#0000FF","#FF0000"),
+                                  conf.level = 0, margin = 1,main =paste0("Threshold value - ",name))
+  }
+  #else{print("classification has only one level"); break}
+>>>>>>> ac1d2427c5b8c6514b8dddf3f12bd41457b3ea57
   
   #Calculate rsse
   revenue.actual <- test$price*(as.numeric(test$order)-1)
@@ -152,13 +159,21 @@ evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
 }
 
 
+<<<<<<< HEAD
 #Evaluate the predictions - (Add your responses in the console)
 #use an rf model specific to the train set,dataset used for training and testing should match 
 
 rf.model <- randomForest(order~.,train,ntree=500,mtry=8)
+=======
+#rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
+# dataset used for training and testing should match 
+>>>>>>> ac1d2427c5b8c6514b8dddf3f12bd41457b3ea57
 rf.res = evaluate(model = rf.model,
                   modelname = "Random Forest",
                   data = test,actual = test$order,
                   pos = 1,neg = 0,
                   threshold="Mean")
+
+rf.model <- readRDS("rf.model.ji.RDS")
+test <- readRDS("test2")
 
