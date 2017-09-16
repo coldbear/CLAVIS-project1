@@ -12,9 +12,9 @@
 
 
 # Evaluation metric
-user <- function(actual, pred) {
-  rsse = sqrt(sum((actual - pred)^2))
-  return(rsse)
+sse <- function(actual, pred) {
+  error = sum((actual - pred)^2)
+  return(error)
 }
 
 # Custom results function
@@ -30,19 +30,12 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   print("Confusion Matrix")
   
   if(length(levels(pred))>1){
-    confmat <-confusionMatrix(actual,pred)
+    confmat <- caret::confusionMatrix(actual,pred)
     print(confmat)
-<<<<<<< HEAD
     cmplot <- fourfoldplot(confmat$table, color = c("#0000FF","#FF0000"),
                                   conf.level = 0, margin = 1,main =paste0("Threshold value - ",name) )
   }else{print("classification has only one level"); break}
-=======
-    cmplot <- fourfoldplot(table(confmat), color = c("#0000FF","#FF0000"),
-                                  conf.level = 0, margin = 1,main =paste0("Threshold value - ",name))
-  }
-  #else{print("classification has only one level"); break}
->>>>>>> ac1d2427c5b8c6514b8dddf3f12bd41457b3ea57
-  
+
   #Calculate rsse
   revenue.actual <- test$price*(as.numeric(test$order)-1)
   print(summary(revenue.actual))
@@ -50,7 +43,8 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   revenue.pred <- (as.numeric(pred)-1)*test$price
   print(summary(revenue.pred))
 
-  error <- user(revenue.actual,revenue.pred)
+  sse.full <- sse(revenue.actual,revenue.pred)
+  error <- sqrt(sse.full)
   print(paste0("The RSSE from prediction using threshold value ", threshold))
   cat("\n",error)
 
@@ -60,11 +54,14 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   res.high <- subset(res,res$revenue.actual>=4)
   
   # Low value item Decomposition
-  rsse.low <- user(res.low$revenue.actual,res.low$revenue.pred)
+  sse.low <- sse(res.low$revenue.actual,res.low$revenue.pred)
+  percent.sse.low <- sse.low/sse.full
+  cat("\n","The percentage of error for low value items is ",percent.sse.low)
+  
   bias.low = (mean(res.low$revenue.actual) - mean(res.low$revenue.pred))
   actual.skew.low = skewness(res.low$revenue.actual)  # to check the distributions
   predicted.skew.low = skewness(res.low$revenue.pred)
-  error.low = cbind(rsse.low,bias.low,actual.skew.low, predicted.skew.low)
+  error.low = cbind(sse.low,bias.low,actual.skew.low, predicted.skew.low)
   cat("\n", "Decomposing the error for low value items: ", "\n")
   print(error.low)
 
@@ -89,11 +86,14 @@ results <- function(probabilities,actual,threshold,pos,neg,name){
   dist.plot.low
   
   # High value item Decomposition
-  rsse.high <- user(res.high$revenue.actual,res.high$revenue.pred)
+  sse.high <- sse(res.high$revenue.actual,res.high$revenue.pred)
+  percent.sse.high <- sse.high/sse.full
+  cat("\n","The percentage of error for high value items is ",percent.sse.high)
+  
   bias.high = (mean(res.high$revenue.actual) - mean(res.high$revenue.pred))
   actual.skew.high = skewness(res.high$revenue.actual)  # to check the distributions
   predicted.skew.high = skewness(res.high$revenue.pred)
-  error.high = cbind(rsse.high,bias.high,actual.skew.high, predicted.skew.high)
+  error.high = cbind(sse.high,bias.high,actual.skew.high, predicted.skew.high)
   cat("\n", "Decomposing the error for high value items: ", "\n")
   print(error.high)
   
@@ -159,15 +159,12 @@ evaluate = function(model,modelname,data,actual,pos,neg,threshold) {
 }
 
 
-<<<<<<< HEAD
+
 #Evaluate the predictions - (Add your responses in the console)
 #use an rf model specific to the train set,dataset used for training and testing should match 
 
 rf.model <- randomForest(order~.,train,ntree=500,mtry=8)
-=======
-#rf.model <- readRDS("rfe.train.RDS") - use an rf model specific to the train set, 
-# dataset used for training and testing should match 
->>>>>>> ac1d2427c5b8c6514b8dddf3f12bd41457b3ea57
+
 rf.res = evaluate(model = rf.model,
                   modelname = "Random Forest",
                   data = test,actual = test$order,
