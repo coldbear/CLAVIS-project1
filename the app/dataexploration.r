@@ -1,6 +1,7 @@
 
 original <- readRDS("original.RDS")
 
+
 explora1 <- function(orignal, train){
 # Correlation scatterplots 
 
@@ -11,14 +12,12 @@ ggplot(original, aes(x=original$price, y=original$price-original$competitorPrice
        title="Effect of difference in prices on revenue")
 }
 
-explora2 <- function(train){
-pairs(train[,c(1,3,4,5,8)],col=train$order)
-}
-#e <- scatter.smooth(train$price,train$order)
 
 explora2 <- function(train){
-  pairs(train[,c(1,3,4,5,8)],col=train$order)
+pairs(train[,c(1,3,4,5,8)],col=train$order)
+  scatter.smooth(train$price,train$order)
 }
+
 
 ## BOXPLOTS ##
 
@@ -41,7 +40,6 @@ get_boxplots <- function(train){
 
 
 ###Missing values
-
 missing <- function(data){
-missmap(data, main = "Missingness Map Dataset name")
+missmap(data, main = "Missingness Map Dataset name", y.labels =NULL,y.at=NULL,col=c("blue", "grey"))
 }
