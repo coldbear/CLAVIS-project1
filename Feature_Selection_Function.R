@@ -166,9 +166,6 @@ print(final.boruta)
 
 
 getSelectedAttributes(final.boruta, withTentative = F)
-
-
-
 boruta.df = attStats(final.boruta)
 class(boruta.df)
 print(boruta.df)
@@ -261,8 +258,6 @@ Select_Features(method = "Boruta_Final")
 # respectively rejected and confirmed attributes#
 
 ## SOURCE: (Kursa and Rudnicki, 2010)
-
-
 
 
 
