@@ -14,6 +14,7 @@ test<- readRDS("test2")
 #Libraries
 if(!require("shiny")) install.packages("shiny"); library("shiny")
 if(!require("randomForest")) install.packages("randomForest"); library("randomForest")
+if(!require("shinyjs")) install.packages("shinyjs"); library("shinyjs")
 if(!require("ICEbox")) install.packages("ICEbox"); library("ICEbox")
 if(!require("psych")) install.packages("psych"); library("psych")
 if(!require("caret")) install.packages("caret"); library("caret")
@@ -62,6 +63,9 @@ output$summarymodel <- renderPrint({
 output$exploration1 <- renderPlot({
   explora1(orignal, train)
 })
+#observeEvent(input$scatt, {
+#  toggle("exploration1")
+#})
 
 output$exploration2 <- renderPlot({
   explora2(train)
@@ -134,7 +138,7 @@ output$confmatrix <- renderPlot({
     ice(pidICEbox)
   })
   output$ice2 <- renderPlot({
-    #ice(input$icevar)
+  #  ice(input$icevar)
     ice(priceICEbox)
   })
 }

@@ -42,6 +42,8 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   sidebarPanel(
     p("The  application comes with pre-loaded dataset from APA and trained RandomForest Model"),
     numericInput(inputId = "obs",min = 1, max = 40, step = 1,label = "Number of observations to view:",value = 3)
+  #  useShinyjs(),
+   # actionButton("scatt", "Scatterplot")
     
    # checkboxGroupInput("checkGroup", label = h3("Dataset Features"), 
                 #       choices = feature.list, inline = F,
@@ -129,7 +131,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
     p("help visualizing the average partial relationships between predicted response and one or more features, which allows to draw certain conclusions about the underlying relationships"),
     h2("ICEbox plots"),
     p("provide deeper look into the variance of the fitted value across the covariates, showing the points of occurring heterogeneity. It  takes individual observations into account  instead of averaged like PDP")),
-    #selectInput(inputId = "icevar", label ="Select ICEbox graph:", choices = c("pidICEbox", "priceICEbox"))),
+    #selectInput(inputId = "icevar", label ="Select ICEbox variable:", choices = c("pid"="pidICEbox", "price"="priceICEbox"))),
   
   mainPanel(
     p("Graphs are loading, give it some time"), 
