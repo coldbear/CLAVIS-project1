@@ -10,7 +10,7 @@
 
 #### Note : For the rsse decomposition to work the dataset needs to have the price variable
 
-
+rf.model <- readRDS("rf.model")
 # Evaluation metric
 sse <- function(actual, pred) {
   error = sum((actual - pred)^2)

@@ -5,6 +5,13 @@
 
 
 
+#Load data 
+data <- readRDS("workset")
+rf.model <- readRDS("rf.model")
+train <- readRDS("train2")
+test<- readRDS("test2")
+
+
 #Libraries
 if(!require("shiny")) install.packages("shiny"); library("shiny")
 if(!require("randomForest")) install.packages("randomForest"); library("randomForest")
@@ -22,21 +29,6 @@ if(!require("InformationValue")) install.packages("InformationValue"); library("
 if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
 
 
-
-#setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
-
-#Load data 
-data <- readRDS("workset")
-#rf.model <- readRDS('rfe.train.RDS')
-
-#set.seed(123)
-#idx <- createDataPartition(data$order,p = 0.7, list = FALSE)
-#train <- data[idx, ]
-#test <- data[-idx, ]
-
-train <- readRDS("train2")
-test<- readRDS("test2")
-rf.model <- readRDS("rf.model")
 
 #Load  functionality
 source("dataexploration.r")
@@ -139,6 +131,7 @@ output$confmatrix <- renderPlot({
   output$pdp <- renderPlot({
     pdp (rf.model,data)
   })
+  
   output$ice1 <- renderPlot({
    #ice(input$icevar)
     ice(pidICEbox)

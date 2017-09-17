@@ -122,7 +122,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   tabPanel("Interpretation",
            
-  titlePanel("Looking into 'black box'"), 
+  titlePanel("Interpretation'"), 
   
   sidebarPanel(
     h2("Partial Dependance Plots"),
