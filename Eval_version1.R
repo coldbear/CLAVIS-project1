@@ -138,7 +138,6 @@ pred = return_confmat(rf.model,test$order,"Mean",1,0)
 
 ###################
 # Function call for error decomposition
-
 low.decompose <- error_decomposition(act=test$order,
                                      pred= pred,
                                      "low","Mean")
