@@ -41,8 +41,32 @@ return_confmat <- function(probabilities,actual,threshold,pos,neg,threshold_name
 }
 
 
-error_decomposition <- function(actual,predicted,type,sse.full,threshold,threshold_name){
+error_decomposition <- function(act,pred,type,threshold,threshold_name){
   
+ 
+  # Calculate revenue
+  revenue.actual <- test$price*(as.numeric(test$order)-1)
+  revenue.pred <- (as.numeric(pred)-1)*test$price
+
+  #Calculate rsse
+  sse.full <- sse(revenue.actual,revenue.pred)
+  error <- sqrt(sse.full)
+  print(paste0("The RSSE from prediction is"))
+  cat("\n",error)
+  
+  #High-low split
+  res = as.data.frame(cbind(revenue.actual,revenue.pred))
+  res.low <- subset(res,res$revenue.actual<4)
+  res.high <- subset(res,res$revenue.actual>=4)
+  
+  # RSSE decomposition
+  if(type=="low"){
+    actual <- res.low$revenue.actual
+    predicted <- res.low$revenue.pred
+  }else{
+    actual <- res.high$revenue.actual
+    predicted <- res.high$revenue.pred
+  }
   sse<- sse(actual,predicted)
   percent.error <- sse/sse.full
   cat("\n","The percentage of error for " ,type ,"value items is ",percent.error)
@@ -97,35 +121,15 @@ t_name <- "Mean"
 
 pred = return_confmat(probabilities,test$order,t_value,1,0,t_name)
 
-###############
-# Calculate revenue
-revenue.actual <- test$price*(as.numeric(test$order)-1)
-print(summary(revenue.actual))
-
-revenue.pred <- (as.numeric(pred)-1)*test$price
-print(summary(revenue.pred))
-
-#Calculate rsse
-
-sqerror <- sse(revenue.actual,revenue.pred)
-error <- sqrt(sqerror)
-print(paste0("The RSSE from prediction is"))
-cat("\n",error)
-
-# RSSE decomposition
-res = as.data.frame(cbind(revenue.actual,revenue.pred))
-res.low <- subset(res,res$revenue.actual<4)
-res.high <- subset(res,res$revenue.actual>=4)
-
 ###################
 # Function call for error decomposition
 
-low.decompose <- error_decomposition(actual=res.low$revenue.actual,
-                                     predicted= res.low$revenue.pred,
-                                     "low",sqerror,t_value,t_name)
+low.decompose <- error_decomposition(act=test$order,
+                                     pred= pred,
+                                     "low",t_value,t_name)
 
-high.decompose <- error_decomposition(actual=res.high$revenue.actual,
-                                      predicted= res.high$revenue.pred,
-                                      "high",sqerror,t_value,t_name)
+high.decompose <- error_decomposition(act=test$order,
+                                      pred= pred,
+                                      "high",t_value,t_name)
 
 
