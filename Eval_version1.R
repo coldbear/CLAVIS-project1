@@ -66,7 +66,32 @@ return_confmat <- function(model,actual,threshold,pos,neg){
 }
 
 
-error_decomposition <- function(act,pred,type,threshold){
+error_decomposition <- function(model,actual,type,threshold){
+  
+  
+  probabilities = predict(rf.model, newdata = test,type = "prob")[,2]
+  stats = summary(probabilities)
+  
+  if(threshold == "Random") {
+    t_value = 0.5
+    t_name = "Random"}
+  
+  if(threshold == "Mean") {
+    t_value = stats[4]
+    t_name = "Mean"}
+  
+  if(threshold == "Median") {
+    t_value = stats[3]
+    t_name = "Median"}
+  
+  if(threshold == "3quad") {
+    t_value = stats[5]
+    t_name = "3 quad"}
+  
+  if(is.numeric(threshold)){
+    t_value = as.numeric(threshold)
+    t_name = "User"
+  }
   
  
   # Calculate revenue
@@ -117,7 +142,7 @@ error_decomposition <- function(act,pred,type,threshold){
                    ylim = range(c(y1,y2)), xlab = "Revenue", ylab = "Density")
   points(x2, y2, col = "red")
   title(main = paste0("Distribution of actual vs predicted for ", type ,"\n ",
-                      " value item with threshold value : ",threshold))
+                      " value item with threshold value : ",t_name,"-",t_value))
   legend("topright", legend = c("Actual", "Predicted"), fill = c("green", "red"))
   
   dist.plot
