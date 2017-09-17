@@ -53,10 +53,10 @@ create_plots <- function(y = "order", model, train, test, CBTN = 0, CBFN = -1, C
   }
   
   # generate predictions
-  yhat <- predict(model, newdata = test, type = "prob")[,2]
+  yhat <- data.frame("pred" = predict(model, newdata = test, type = "prob")[,2])
   
   # combine predictions & true value in a data frame
-  data = data.frame(y, yhat)
+  data = data.frame("order" = y, "pred"= yhat$pred)
   
   ######################################################
   ################### ROC CURVE ########################
@@ -64,7 +64,7 @@ create_plots <- function(y = "order", model, train, test, CBTN = 0, CBFN = -1, C
 
   if(plot == "ROC-Curve"){
     # define style
-    basicplot <- ggplot(data, aes(d = y, m = yhat)) + 
+    basicplot <- ggplot(data, aes(d = order, m = pred)) + 
       geom_roc(labelround = 2, 
                cutoffs.at = NULL, 
                cutoff.labels = NULL,
@@ -103,11 +103,11 @@ create_plots <- function(y = "order", model, train, test, CBTN = 0, CBFN = -1, C
    
     # RUN OPTIMAL CUTPOINTS
     oc = optimal.cutpoints(
-      X = yhat, 
+      X = colnames(yhat), 
       status = "order", 
       tag.healthy = "0", 
       methods = "MCT", 
-      data = test, 
+      data = data, 
       control = model.control.optc)
     
     # SELECT OPTIMAL CUTPOINT (compute average, if oc not unique)
@@ -131,8 +131,8 @@ create_plots <- function(y = "order", model, train, test, CBTN = 0, CBFN = -1, C
   ######################################################
 
   # plot
-  pr.curve(scores.class0 = yhat, weights.class0 = y, curve = TRUE) 
-  
+  pr <- pr.curve(scores.class0 = yhat$pred, weights.class0 = y, curve = TRUE) 
+  plot(pr)
   } else if(plot == "Uplift-Curve"){ 
   
   
@@ -142,7 +142,7 @@ create_plots <- function(y = "order", model, train, test, CBTN = 0, CBFN = -1, C
 
 
   # plot
-  ks_plot(actuals=y, predictedScores=yhat)
+  ks_plot(actuals=data$order, predictedScores=data$pred)
   }
 }
   
