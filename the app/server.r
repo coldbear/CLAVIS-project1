@@ -1,34 +1,151 @@
 
 ############################################################
-                      'CLAVIS APP'
+'CLAVIS APP'
 ############################################################
 
+
+
 #Libraries
-library(shiny)
-library(caret)
-library(randomForest)
-#library(maps)
-#library(mapproj)
+if(!require("shiny")) install.packages("shiny"); library("shiny")
+if(!require("randomForest")) install.packages("randomForest"); library("randomForest")
+if(!require("ICEbox")) install.packages("ICEbox"); library("ICEbox")
+if(!require("psych")) install.packages("psych"); library("psych")
+if(!require("caret")) install.packages("caret"); library("caret")
+if(!require("Amelia")) install.packages("Amelia"); library("Amelia")
+if(!require("utils")) install.packages("caret"); library("utils")
+if(!require("Boruta")) install.packages("Boruta"); library("Boruta")
+if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
+if(!require("reshape2")) install.packages("reshape2"); library("reshape2")
+if(!require("plotROC")) install.packages("plotROC"); library("plotROC")
+if(!require("e1071")) install.packages("e1071"); library("e1071")
+if(!require("InformationValue")) install.packages("InformationValue"); library("InformationValue")
+if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
 
 
-#Load data
-data <- readRDS("alt")
+
+#setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
+
+#Load data 
+data <- readRDS("workset")
+#rf.model <- readRDS('rfe.train.RDS')
+
+#set.seed(123)
+#idx <- createDataPartition(data$order,p = 0.7, list = FALSE)
+#train <- data[idx, ]
+#test <- data[-idx, ]
+
+train <- readRDS("train2")
+test<- readRDS("test2")
+rf.model <- readRDS("rf.model")
 
 #Load  functionality
-source("interpretation.R")
+source("dataexploration.r")
+source("modelselection.r")
+source("varselection.r")
+source("evaluation.r")
+source("interpretation.r")
 
-# Define server logic required to summarize and view the selected
-# dataset
-shinyServer(function(input, output) {
+
+
+#Start of server function
+
+server <- function(input, output) {
   
   
-  output$pdp <- renderPlot({
-    varimp_pd (data = data, 
-              train_size= input$slidertrainsplit, 
-              var_clus="order", 
-              rf_ntree=input$ntreeslider,
-              rf_mtry=input$mtryslider)
+           #####DATA  EXPLORATION TAB#####
+# Load data observations
+  output$datatable <- renderTable({
+  head(data, n = input$obs)
+})
+  
+# Generate a summary of the preloaded dataset
+  
+output$summarydata <- renderPrint({
+    summary(data)
   })
+# Generate a summary of the preloaded model
+output$summarymodel <- renderPrint({
+  rf.model
 })
 
-    
+#Graphs
+
+output$exploration1 <- renderPlot({
+  explora1(orignal, train)
+})
+
+output$exploration2 <- renderPlot({
+  explora2(train)
+})
+
+output$boxplots <- renderPlot({
+  get_boxplots(train)
+})
+
+output$miss <- renderPlot({
+  missing(original)
+})
+
+           #####MODEL SELECTION TAB#####
+output$modelselecttext <- renderPrint({
+  create_plots("order", rf.model, train, test,CBTN = input$CBTN, CBFN = input$CBFN, CBFP = input$CBFP, CBTP = input$CBTP, input$plottype)
+})
+output$modelselect <- renderPlot({
+  input$refreshButton
+  isolate({
+  create_plots("order", rf.model, train, test,CBTN = input$CBTN, CBFN = input$CBFN, CBFP = input$CBFP, CBTP = input$CBTP, input$plottype)})
+})
+
+
+         #####VARIABLE SELECTION TAB#####
+
+#Load the variable selection plotsplots
+
+output$vs <- renderPlot({
+  Select_Features(input$method)
+})
+
+output$vstext <- renderPrint({
+  annotation(input$method)
+  })
+
+
+
+            #####EVALUATION TAB#####
+
+output$confmatrix <- renderPlot({
+  return_confmat(rf.model, test$order, input$th, 1,0)
+})   
+
+  output$errorlow <- renderPlot({
+    error_decomposition(rf.model,test$order,"low",input$th)
+})
+  
+  output$errorhigh <- renderPlot({
+    error_decomposition(rf.model,test$order,"high",input$th)
+  }) 
+ # output$evalerroroutput <- renderPrint({
+ #   capture.output(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
+ # })
+
+
+            #####INTERPRETATION TAB#####
+
+#  output$varimp <- renderPlot({
+      
+ #   varimp(rf.model)
+#  })
+
+  output$pdp <- renderPlot({
+    pdp (rf.model,data)
+  })
+  output$ice1 <- renderPlot({
+   #ice(input$icevar)
+    ice(pidICEbox)
+  })
+  output$ice2 <- renderPlot({
+    #ice(input$icevar)
+    ice(priceICEbox)
+  })
+}
+
