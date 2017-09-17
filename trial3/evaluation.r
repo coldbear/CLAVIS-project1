@@ -9,7 +9,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 #### Note : For the rsse decomposition to work the dataset needs to have the price variable
-
+test <- readRDS("test")
 
 # Evaluation metric
 sse <- function(actual, pred) {
