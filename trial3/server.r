@@ -11,7 +11,7 @@ if(!require("randomForest")) install.packages("randomForest"); library("randomFo
 if(!require("ICEbox")) install.packages("ICEbox"); library("ICEbox")
 if(!require("psych")) install.packages("psych"); library("psych")
 if(!require("caret")) install.packages("caret"); library("caret")
-if(!require("Amelia")) install.packages("caret"); library("Amelia")
+if(!require("Amelia")) install.packages("Amelia"); library("Amelia")
 if(!require("utils")) install.packages("caret"); library("utils")
 if(!require("Boruta")) install.packages("Boruta"); library("Boruta")
 if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
@@ -25,11 +25,14 @@ if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
 setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
 
 #Load data 
-data <- readRDS("workset")
+data <- readRDS("dataset.rds")
 rf.model <- readRDS("rf.model")
-test <- readRDS("test")
+set.seed(123)
+#idx <- createDataPartition(data$order,p = 0.7, list = FALSE)
+#train <- data[idx, ]
+#test <- data[-idx, ]
 train <- readRDS("train")
-
+test<- readRDS("test")
 
 
 #Load  functionality
@@ -76,12 +79,18 @@ output$boxplots <- renderPlot({
   get_boxplots(train)
 })
 
+output$miss <- renderPlot({
+  missing(original)
+})
+
            #####MODEL SELECTION TAB#####
 output$modelselecttext <- renderPrint({
   create_plots("order", rf.model, train, test,CBTN = input$CBTN, CBFN = input$CBFN, CBFP = input$CBFP, CBTP = input$CBTP, input$plottype)
 })
 output$modelselect <- renderPlot({
-  create_plots("order", rf.model, train, test,CBTN = input$CBTN, CBFN = input$CBFN, CBFP = input$CBFP, CBTP = input$CBTP, input$plottype)
+  input$refreshButton
+  isolate({
+  create_plots("order", rf.model, train, test,CBTN = input$CBTN, CBFN = input$CBFN, CBFP = input$CBFP, CBTP = input$CBTP, input$plottype)})
 })
 
 
@@ -102,11 +111,11 @@ output$confmatrix <- renderPlot({
 })   
 
   output$errorlow <- renderPlot({
-    error_decomposition(rf.model,test$order,"low",input$evalthresh)
+    error_decomposition(rf.model,test$order,"low",input$evalthreshnum,input$evalthresh)
 })
   
   output$errorhigh <- renderPlot({
-    error_decomposition(rf.model,test$order,"high",input$evalthresh)
+    error_decomposition(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
   }) 
  # output$evalerroroutput <- renderPrint({
  #   capture.output(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)

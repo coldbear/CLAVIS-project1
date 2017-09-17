@@ -1,5 +1,5 @@
 
-original <- readRDS("olddata")
+original <- readRDS("original.RDS")
 
 explora1 <- function(orignal, train){
 # Correlation scatterplots 
@@ -42,5 +42,6 @@ get_boxplots <- function(train){
 
 ###Missing values
 
-#missmap(data, main = "Missingness Map Dataset name")
-#missmap(full, y.labels =NULL,y.at=NULL,col=c("black", "grey"))
+missing <- function(data){
+missmap(data, main = "Missingness Map Dataset name")
+}

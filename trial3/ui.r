@@ -7,6 +7,27 @@
 
 shinyUI(navbarPage(title=strong("CLAVIS"),
                    
+  tabPanel("About",
+           
+  titlePanel("About CLAVIS"),
+  sidebarPanel(p("The CLAVIS applcation was created on the basis of Shiny R Package, as part of the Applied Predictive Analytics course assignment at Humboldt University of Berlin."),
+               h4("Team of Authors:"),
+               tags$li("Jayalakshmi Choodamani"), 
+               tags$li("Stephanie Finkenwirth"), 
+               tags$li("Hamayun Khan"),
+               tags$li("Alisa Kolesnikova"),
+               hr(),
+               print("Copyright 2017  kolesnal@hu-berlin.de")),  
+    
+  mainPanel(h2("Application Description"),
+             p("The primary goal of the application is provision of CLAssifier VISualization infrastructure for the complimentary usage when performing a task of classification analysis. Authors strongly believe in efficiency and utility of visual perception when going through the classic KDD process. The appliation consists of 5 tabls:"),
+            p("Data Exploration: "),
+            p("Model Selection: "),
+            p("Variable Selection: "),
+            p("Model  Evaluation: "),
+            p("Interpretation: "))
+             ),
+           
                    #####DATA  EXPLORATION TAB#####
                 
   tabPanel("Data Exploration",
@@ -16,16 +37,22 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   sidebarPanel(
     p("The  application comes with pre-loaded dataset from APA and trained RandomForest Model"),
     numericInput(inputId = "obs",min = 1, max = 40, step = 1,label = "Number of observations to view:",value = 3)
+    
+   # checkboxGroupInput("checkGroup", label = h3("Dataset Features"), 
+                #       choices = feature.list, inline = F,
+                  #     selected = names(feature.list))
     ),
   
   mainPanel(
-    h2("Data Overview"),
     tableOutput("datatable"), 
+    h2("Scatterplot"),
     plotOutput("exploration1"),
     h2("Class distribution"),
     plotOutput("exploration2"),
     h2("Boxplots"),
-    plotOutput("boxplots"),
+    plotOutput("boxplot"),
+    h2("Missing values"),
+    plotOutput("miss"),
     h2("Model Summary"),
     verbatimTextOutput("summarymodel"))
   ),
@@ -41,7 +68,8 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
                numericInput(inputId = "CBTN", step = 1,label = "Cost Benefit True Negative:",value = 0),
                numericInput(inputId = "CBFN",step = 1,label = "Cost Benefit False Negative:",value = -1),
                numericInput(inputId = "CBFP",step = 1,label = "Cost Benefit False Positive:",value = -1),
-               numericInput(inputId = "CBTP",step = 1,label = "Cost Benefit True Positive:",value = 0)
+               numericInput(inputId = "CBTP",step = 1,label = "Cost Benefit True Positive:",value = 0),
+               actionButton("refreshButton", "Refresh")
                ),
   mainPanel(
     verbatimTextOutput("modelselecttext"), 

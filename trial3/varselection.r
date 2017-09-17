@@ -1,8 +1,8 @@
 ##############################
 #### Feature Selection########
 ##############################
-rfe.train <- readRDS("rfetrain")
-boruta.train<- readRDS("borutatrain")
+rfe.train <- readRDS("rfe.train.RDS")
+boruta.train<- readRDS("boruta.train.RDS")
 
 Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){ 
   require(Boruta)
