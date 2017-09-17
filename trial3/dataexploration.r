@@ -40,3 +40,7 @@ get_boxplots <- function(train){
 }
 
 
+###Missing values
+
+#missmap(data, main = "Missingness Map Dataset name")
+#missmap(full, y.labels =NULL,y.at=NULL,col=c("black", "grey"))

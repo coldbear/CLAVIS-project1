@@ -9,7 +9,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 #### Note : For the rsse decomposition to work the dataset needs to have the price variable
-test <- readRDS("test")
+
 
 # Evaluation metric
 sse <- function(actual, pred) {
@@ -17,17 +17,40 @@ sse <- function(actual, pred) {
   return(error)
 }
 
-# Custom results function
 
-return_confmat <- function(rf.model, test, actual,threshold,pos,neg,threshold_name){
+
+
+
+
+# Custom results function
+return_confmat <- function(model,actual,threshold,pos,neg){
   
   probabilities = predict(rf.model, newdata = test,type = "prob")[,2]
-  print("Actual")
-  print(table(actual))
+  stats = summary(probabilities)
   
-  pred= as.factor(ifelse(probabilities >= threshold, pos, neg))
-  print(paste0("Predicted ",threshold))
-  print(table(pred))
+  if(threshold == "Random") {
+    t_value = 0.5
+    t_name = "Random"}
+  
+  if(threshold == "Mean") {
+    t_value = stats[4]
+    t_name = "Mean"}
+  
+  if(threshold == "Median") {
+    t_value = stats[3]
+    t_name = "Median"}
+  
+  if(threshold == "3quad") {
+    t_value = stats[5]
+    t_name = "3 quad"}
+  
+  if(is.numeric(threshold)){
+    t_value = as.numeric(threshold)
+    t_name = "User"
+  }
+  
+  
+  pred = as.factor(ifelse(probabilities >= t_value, pos, neg))
   
   print("Confusion Matrix")
   
@@ -36,18 +59,40 @@ return_confmat <- function(rf.model, test, actual,threshold,pos,neg,threshold_na
     print(confmat)
     cmplot <- fourfoldplot(confmat$table, color = c("#0000FF","#FF0000"),
                            conf.level = 0, margin = 1,
-                           main =paste0("Threshold value - ",threshold," - ",
-                                        threshold_name))
+                           main =paste0("Threshold value - ",t_value," - ",
+                                        t_name))
   }else{print("classification has only one level"); break}
   return(pred)
 }
 
 
-error_decomposition <- function(rf.model,act,type,threshold,threshold_name){
- 
-  probabilities = predict(rf.model, newdata = test,type = "prob")[,2]
+error_decomposition <- function(model,actual,type,threshold){
   
-  pred= as.factor(ifelse(probabilities >= threshold, 1, 0))
+  
+  probabilities = predict(rf.model, newdata = test,type = "prob")[,2]
+  stats = summary(probabilities)
+  
+  if(threshold == "Random") {
+    t_value = 0.5
+    t_name = "Random"}
+  
+  if(threshold == "Mean") {
+    t_value = stats[4]
+    t_name = "Mean"}
+  
+  if(threshold == "Median") {
+    t_value = stats[3]
+    t_name = "Median"}
+  
+  if(threshold == "3quad") {
+    t_value = stats[5]
+    t_name = "3 quad"}
+  
+  if(is.numeric(threshold)){
+    t_value = as.numeric(threshold)
+    t_name = "User"
+  }
+  
   
   # Calculate revenue
   revenue.actual <- test$price*(as.numeric(test$order)-1)
@@ -97,10 +142,33 @@ error_decomposition <- function(rf.model,act,type,threshold,threshold_name){
                    ylim = range(c(y1,y2)), xlab = "Revenue", ylab = "Density")
   points(x2, y2, col = "red")
   title(main = paste0("Distribution of actual vs predicted for ", type ,"\n ",
-                      " value item with threshold value : ",threshold_name," - ",threshold))
+                      " value item with threshold value : ",t_name,"-",t_value))
   legend("topright", legend = c("Actual", "Predicted"), fill = c("green", "red"))
   
   dist.plot
   return(error)
 }
+
+
+#Evaluate the predictions 
+#use an rf model specific to the train set,dataset used for training and testing should match 
+#rf.model <- readRDS("rf.model.ji.RDS")
+#test <- readRDS("test")
+#rf.model <- randomForest(order~.,train,ntree=500,mtry=8)
+
+############
+# Function call for confusion matrix 
+
+#pred = return_confmat(rf.model,test$order,"Mean",1,0)
+
+###################
+# Function call for error decomposition
+#low.decompose <- error_decomposition(act=test$order,
+#                                 pred= pred,
+#                             "low","Mean")
+
+#high.decompose <- error_decomposition(act=test$order,
+#                            pred= pred,
+#                            "high","Mean")
+
 

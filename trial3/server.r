@@ -11,6 +11,7 @@ if(!require("randomForest")) install.packages("randomForest"); library("randomFo
 if(!require("ICEbox")) install.packages("ICEbox"); library("ICEbox")
 if(!require("psych")) install.packages("psych"); library("psych")
 if(!require("caret")) install.packages("caret"); library("caret")
+if(!require("Amelia")) install.packages("caret"); library("Amelia")
 if(!require("utils")) install.packages("caret"); library("utils")
 if(!require("Boruta")) install.packages("Boruta"); library("Boruta")
 if(!require("ggplot2")) install.packages("ggplot2"); library("ggplot2")
@@ -21,7 +22,7 @@ if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
 
 
 
-#setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
+setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
 
 #Load data 
 data <- readRDS("workset")
@@ -97,20 +98,16 @@ output$vs <- renderPlot({
             #####EVALUATION TAB#####
 
 output$confmatrix <- renderPlot({
-  return_confmat(rf.model, test, test$order, input$evalthreshnum, 1,0, input$evalthresh)
-})
-
-#output$confmatrixoutput <- renderPrint({
-#  capture.output(return_confmat(rf.model, test, test$order, input$evalthreshnum, 1,0, input$evalthresh))
-#})
+  return_confmat(rf.model, test$order, input$evalthresh, 1,0)
+})   
 
   output$errorlow <- renderPlot({
-    error_decomposition(rf.model,test$order,"low",input$evalthreshnum,input$evalthresh)
+    error_decomposition(rf.model,test$order,"low",input$evalthresh)
 })
   
   output$errorhigh <- renderPlot({
-    error_decomposition(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
-  })
+    error_decomposition(rf.model,test$order,"high",input$evalthresh)
+  }) 
  # output$evalerroroutput <- renderPrint({
  #   capture.output(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
  # })

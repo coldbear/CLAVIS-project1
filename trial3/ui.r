@@ -9,7 +9,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
                    
                    #####DATA  EXPLORATION TAB#####
                 
-  tabPanel("Data",
+  tabPanel("Data Exploration",
            
   titlePanel("Data Exploration"), 
   
@@ -78,8 +78,9 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
            
   titlePanel("Model  Evaluation"), 
   
- sidebarPanel(numericInput(inputId = "evalthreshnum",min = 0, max = 1, step =0.05,label = "Classification threshold:",value = 0.6),
-              selectInput(inputId = "evalthresh", label ="Select threshold:", choices = c("Random", "Mean", "Median", "3quad"))
+ sidebarPanel(h2("Select classification threshold:"),
+          #    radioButtons(inputId = "input$evalthresh",list("Random", "Mean", "Median", "3quad")),
+              numericInput(inputId = "input$evalthresh",min = 0, max = 1, step =0.05,label = "or custom threshold:",value = 0.6)
            ),
   
   mainPanel(h2("Confusion matrix"), 
