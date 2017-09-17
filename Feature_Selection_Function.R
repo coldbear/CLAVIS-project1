@@ -198,43 +198,22 @@ rfe.train = readRDS(file = "rfe.train.RDS")
 
 
 
-Select_Features = function(method = c("Random Forest", "Boruta_Tentative","Boruta_Final")){ 
+Select_Features = function(method = c("Random_Forest", "Boruta_Tentative","Boruta_Final")){ 
   require(Boruta)
   require(randomForest)
   
-  if(method == "RF") {
+  if(method == "Random_Forest") {
     #RF Feature Selection
     x=plot(rfe.train, type=c("g", "o"), cex = 1.0, col = 1:11, Labels = T)
     return(x)
+    
   }
   else if(method == "Boruta_Tentative"){
     #Tentative Boruta
     plot(boruta.train,xlab = "", xaxt = "n")
     lz=lapply(1:ncol(boruta.train$ImpHistory),function(i)
       boruta.train$ImpHistory[is.finite(boruta.train$ImpHistory[,i]),i])
-    names(lz) = c("pid",	"price",	"content",	"group",	
-                  "category",	"meanPrice_deviation",	"last_observation",	
-                  "adFlag_prop_obs_5",	"adFlag_prop_obs_10",	
-                  "adFlag_prop_obs_15",	"adFlag_prop_obs_20",	
-                  "adFlag_prop_obs_30",	"adFlag_prop_obs_50",	
-                  "adFlag_last_1_day",	"adFlag_last_0_day",	
-                  "adFlag_last_1_obs",	"adFlag_last_0_obs",	
-                  "adFlag_last_1_obs_norm",	"availability2_prop_obs_15",	
-                  "availability3_prop_obs_75",	"availability3_prop_obs_100",	
-                  "availability4_prop_obs_100",	"pid_prop_per_day",	
-                  "Unique_pids_per_category",	"Unique_pids_per_day",	
-                  "weekday",	"availability_changes12_obs_5",	
-                  "availability_changes42_obs_5",	"availability_changes13_obs_10"
-                  ,"availability_changes21_obs_10","availability_changes32_obs_20",	
-                  "availability_changes42_obs_30",	"availability_changes23_obs_50",
-                  "availability_changes24_obs_50",	"availability_changes31_obs_50",
-                  "availability_changes32_obs_75",	"availability_changes14_obs_100",
-                  "availability_changes21_obs_100",	"availability_changes34_obs_100",	
-                  "cPriceNA",	"unit",	"genericProduct",	"salesIndex",	"campaignIndex",
-                  "Unique_pids_per_group_binned",	"Unique_pids_per_group_binned_2",	
-                  "Unique_pids_per_manufacturer_binned",	"Unique_pids_per_manufacturer_binned_2",	
-                  "Unique_pids_per_category_binned","Unique_pids_per_day_binned",	
-                  "day2",	"shadowMax",	"shadowMean",	"shadowMin")
+    names(lz) = colnames(boruta.train$ImpHistory)
     Labels = sort(sapply(lz,median))
     axis(side = 1,las=2,labels = names(Labels),
          at = 1:ncol(boruta.train$ImpHistory), cex.axis = 0.7)
@@ -246,29 +225,7 @@ Select_Features = function(method = c("Random Forest", "Boruta_Tentative","Borut
     plot(final.boruta, xlab = "", xaxt = "n")
     lz=lapply(1:ncol(final.boruta$ImpHistory),function(i)
       final.boruta$ImpHistory[is.finite(final.boruta$ImpHistory[,i]),i])
-    names(lz) =     names(lz) = c("pid",	"price",	"content",	"group",	
-                                  "category",	"meanPrice_deviation",	"last_observation",	
-                                  "adFlag_prop_obs_5",	"adFlag_prop_obs_10",	
-                                  "adFlag_prop_obs_15",	"adFlag_prop_obs_20",	
-                                  "adFlag_prop_obs_30",	"adFlag_prop_obs_50",	
-                                  "adFlag_last_1_day",	"adFlag_last_0_day",	
-                                  "adFlag_last_1_obs",	"adFlag_last_0_obs",	
-                                  "adFlag_last_1_obs_norm",	"availability2_prop_obs_15",	
-                                  "availability3_prop_obs_75",	"availability3_prop_obs_100",	
-                                  "availability4_prop_obs_100",	"pid_prop_per_day",	
-                                  "Unique_pids_per_category",	"Unique_pids_per_day",	
-                                  "weekday",	"availability_changes12_obs_5",	
-                                  "availability_changes42_obs_5",	"availability_changes13_obs_10"
-                                  ,"availability_changes21_obs_10","availability_changes32_obs_20",	
-                                  "availability_changes42_obs_30",	"availability_changes23_obs_50",
-                                  "availability_changes24_obs_50",	"availability_changes31_obs_50",
-                                  "availability_changes32_obs_75",	"availability_changes14_obs_100",
-                                  "availability_changes21_obs_100",	"availability_changes34_obs_100",	
-                                  "cPriceNA",	"unit",	"genericProduct",	"salesIndex",	"campaignIndex",
-                                  "Unique_pids_per_group_binned",	"Unique_pids_per_group_binned_2",	
-                                  "Unique_pids_per_manufacturer_binned",	"Unique_pids_per_manufacturer_binned_2",	
-                                  "Unique_pids_per_category_binned","Unique_pids_per_day_binned",	
-                                  "day2",	"shadowMax",	"shadowMean",	"shadowMin")
+    names(lz) =     names(lz) = colnames(final.boruta$ImpHistory)
     Labels = sort(sapply(lz,median))
     axis(side = 1,las=2,labels = names(Labels),
          at = 1:ncol(final.boruta$ImpHistory), cex.axis = 0.7)
@@ -279,7 +236,7 @@ Select_Features = function(method = c("Random Forest", "Boruta_Tentative","Borut
   }
 
 
-Select_Features(method = "RF")
+Select_Features(method = "Random_Forest")
 Select_Features(method = "Boruta_Tentative")
 Select_Features(method = "Boruta_Final")
 
