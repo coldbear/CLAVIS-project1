@@ -41,7 +41,7 @@ return_confmat <- function(probabilities,actual,threshold,pos,neg,threshold_name
 }
 
 
-error_decomposition <- function(actual,predicted,type,sse.full,threshold){
+error_decomposition <- function(actual,predicted,type,sse.full,threshold,threshold_name){
   
   sse<- sse(actual,predicted)
   percent.error <- sse/sse.full
@@ -52,7 +52,7 @@ error_decomposition <- function(actual,predicted,type,sse.full,threshold){
   predicted.skew = skewness(predicted)
   
   error= cbind(sse,percent.error,bias,actual.skew, predicted.skew)
-  cat("\n", "Decomposing the error for low value items: ", "\n")
+  cat("\n", "Decomposing the error for",type,"value items: ", "\n")
   print(error)
   
   # Visualization - Plotting the normal curve - low value 
@@ -62,13 +62,13 @@ error_decomposition <- function(actual,predicted,type,sse.full,threshold){
   x2 = predicted
   y2 = dnorm(predicted,mean = mean(predicted), sd = sd(predicted))
   
-  cat("\n", "Plotting the distributions of the actual and predicted values for low revenue items")
+  cat("\n", "Plotting the distributions of the actual and predicted values")
   
   dist.plot = plot(x1, y1, col = "green", xlim = range(c(x1, x2)),
                    ylim = range(c(y1,y2)), xlab = "Revenue", ylab = "Density")
   points(x2, y2, col = "red")
-  title(main = paste0("Distribution of actual vs predicted for ",type,"\n",
-                      " value item with threshold value : ",threshold))
+  title(main = paste0("Distribution of actual vs predicted for ", type ,"\n ",
+                      " value item with threshold value : ",threshold_name," - ",threshold))
   legend("topright", legend = c("Actual", "Predicted"), fill = c("green", "red"))
   
   dist.plot
@@ -89,7 +89,7 @@ print("Descriptive statistics for the prediction probabilities : ")
 print(stats)
 
 # set threshold
-t_value <- stats[3]
+t_value <- stats[5]
 t_name <- "Mean"
 
 ############
@@ -108,7 +108,7 @@ print(summary(revenue.pred))
 #Calculate rsse
 
 sqerror <- sse(revenue.actual,revenue.pred)
-error <- sqrt(sse.full)
+error <- sqrt(sqerror)
 print(paste0("The RSSE from prediction is"))
 cat("\n",error)
 
@@ -122,10 +122,10 @@ res.high <- subset(res,res$revenue.actual>=4)
 
 low.decompose <- error_decomposition(actual=res.low$revenue.actual,
                                      predicted= res.low$revenue.pred,
-                                     "low",sqerror,t_name)
+                                     "low",sqerror,t_value,t_name)
 
 high.decompose <- error_decomposition(actual=res.high$revenue.actual,
                                       predicted= res.high$revenue.pred,
-                                      "high",sqerror,t_name)
+                                      "high",sqerror,t_value,t_name)
 
 
