@@ -31,11 +31,6 @@ priceICEbox<- readRDS("iceprice")
 ice<- function(icemodel){
 plot(icemodel, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1, centered = TRUE)
 }
-#group.ice = ice(rf.ice, x_train, predictor = "group", logodds = TRUE,
-#                     predictfcn = function(object, newdata){
-#                       predict(object, newdata, type = "prob")[, 2]
- #                        } )
-
 
 
 #plot(group.order.ice, frac_to_plot = 1, prop_range_y = TRUE,

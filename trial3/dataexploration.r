@@ -16,7 +16,12 @@ pairs(train[,c(1,3,4,5,8)],col=train$order)
 }
 #e <- scatter.smooth(train$price,train$order)
 
+explora2 <- function(train){
+  pairs(train[,c(1,3,4,5,8)],col=train$order)
+}
+
 ## BOXPLOTS ##
+
 get_boxplots <- function(train){
   
   # select all numerical variables except certain ones
@@ -27,7 +32,7 @@ get_boxplots <- function(train){
   tobetreated <- tobetreated[tobetreated %in% colnames(train)]
   
   # rearrange data (longform)
-  train.m <- melt(train[,tobetreated], id.vars = "order") # only take numerical values for boxplot
+  train.m <- reshape2::melt(train[,tobetreated], id.vars = "order") # only take numerical values for boxplot
   
   # plot
   p <- ggplot(data = train.m, aes(x=variable, y=value)) 

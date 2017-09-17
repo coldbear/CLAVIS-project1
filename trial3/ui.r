@@ -22,7 +22,10 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
     h2("Data Overview"),
     tableOutput("datatable"), 
     plotOutput("exploration1"),
+    h2("Class distribution"),
     plotOutput("exploration2"),
+    h2("Boxplots"),
+    plotOutput("boxplots"),
     h2("Model Summary"),
     verbatimTextOutput("summarymodel"))
   ),
@@ -30,21 +33,20 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
                    #####MODEL SELECTION TAB#####
    
   tabPanel("Model Selection", 
-           
+         
   titlePanel("Model Selection"), 
   
-  sidebarPanel(p("This tab offers three visualizations that are aiming to...")),
-  
+  sidebarPanel(p("This tab offers three visualizations that are aiming to..."),
+               selectInput(inputId = "plottype", label ="Select type of plot:", choices = c("ROC-Curve", "PR-Curve", "Uplift-Curve")),
+               numericInput(inputId = "CBTN", step = 1,label = "Cost Benefit True Negative:",value = 0),
+               numericInput(inputId = "CBFN",step = 1,label = "Cost Benefit False Negative:",value = -1),
+               numericInput(inputId = "CBFP",step = 1,label = "Cost Benefit False Positive:",value = -1),
+               numericInput(inputId = "CBTP",step = 1,label = "Cost Benefit True Positive:",value = 0)
+               ),
   mainPanel(
-    h2("ROC Curve"),
-    verbatimTextOutput("cutoffpoint"), 
-    plotOutput("roccurve"),
-    h2("PR Curve"),
-    plotOutput("prcurve")),
-    h2("Lift Curve"),
-    plotOutput("liftcurve")
-  
-  ),
+    verbatimTextOutput("modelselecttext"), 
+    plotOutput("modelselect")
+  )),
                    
                    #####VARIABLE SELECTION TAB#####
   tabPanel("Variable Selection",
@@ -92,18 +94,22 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
            
   titlePanel("Looking into 'black box'"), 
   
-  sidebarPanel(selectInput(inputId = "icevar", label ="Select ICEbox graph:", choices = c("pidICEbox", "priceICEbox"))),
-  
+  sidebarPanel(
+    h2("Partial Dependance Plots"),
+    p("help visualizing the average partial relationships between predicted response and one or more features, which allows to draw certain conclusions about the underlying relationships"),
+    h2("ICEbox plots"),
+    p("provide deeper look into the variance of the fitted value across the covariates, showing the points of occurring heterogeneity. It  takes individual observations into account  instead of averaged like PDP")),
+    #selectInput(inputId = "icevar", label ="Select ICEbox graph:", choices = c("pidICEbox", "priceICEbox"))),
   
   mainPanel(
     p("Graphs are loading, give it some time"), 
-    h2("Variable Importance plot"),
-    plotOutput("varimp"), 
+  #  h2("Variable Importance plot"),
+  #  plotOutput("varimp"), 
     h2("Partial Dependance Plots of most important variables"),
     plotOutput("pdp"),
     h2("ICEbox plots"),
-    plotOutput("ice"))
+    plotOutput("ice1"),
+    plotOutput("ice2"))
   )
  )
 )
-  
