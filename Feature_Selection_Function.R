@@ -25,7 +25,9 @@ fold_1$order = ifelse(fold_1$revenue > 0,1,0)
 
 #take a stratified sample 
 set.seed(222)
+#set.seed(211)
 idx = createDataPartition(y = fold_1$order, p = 0.034, list = FALSE)
+idx_test = createDataPartition(y = fold_1$order, p = 0.0025, list = FALSE)
 fold_1 = fold_1[idx,]
 
 #Remove variables not needed
@@ -86,10 +88,42 @@ traindata = cbind(x, fold_1$order)
 colnames(traindata)[52] = "order"
 rm(fold_1)
 rm(x)
+#test = cbind(x, fold_1$order)
+
+new_names = c("pid",	"price",	"content",	"group",	
+              "category",	"meanPrice_deviation",	"last_observation",	
+              "adFlag_prop_obs_5",	"adFlag_prop_obs_10",	
+              "adFlag_prop_obs_15",	"adFlag_prop_obs_20",	
+              "adFlag_prop_obs_30",	"adFlag_prop_obs_50",	
+              "adFlag_last_1_day",	"adFlag_last_0_day",	
+              "adFlag_last_1_obs",	"adFlag_last_0_obs",	
+              "adFlag_last_1_obs_norm",	"availability2_prop_obs_15",	
+              "availability3_prop_obs_75",	"availability3_prop_obs_100",	
+              "availability4_prop_obs_100",	"pid_prop_per_day",	
+              "Unique_pids_per_category",	"Unique_pids_per_day",	
+              "weekday",	"availability_changes12_obs_5",	
+              "availability_changes42_obs_5",	"availability_changes13_obs_10"
+              ,"availability_changes21_obs_10","availability_changes32_obs_20",	
+              "availability_changes42_obs_30",	"availability_changes23_obs_50",
+              "availability_changes24_obs_50",	"availability_changes31_obs_50",
+              "availability_changes32_obs_75",	"availability_changes14_obs_100",
+              "availability_changes21_obs_100",	"availability_changes34_obs_100",	
+              "cPriceNA",	"unit",	"genericProduct",	"salesIndex",	"campaignIndex",
+              "Unique_pids_per_group_binned",	"Unique_pids_per_group_binned_2",	
+              "Unique_pids_per_manufacturer_binned",	"Unique_pids_per_manufacturer_binned_2",	
+              "Unique_pids_per_category_binned","Unique_pids_per_day_binned",	
+              "day2", "order")
+
+
+colnames(traindata)[1:52] = new_names
+colnames(test)[1:52] = new_names
+
+saveRDS(object = traindata, file = "train.rds")
+
 
 
 set.seed(223)
-idx_2 = createDataPartition(y = traindata$order, p = 0.7, list = FALSE)
+idx_2 = createDataPartition(y = fold_1$order, p = 0.7, list = FALSE)
 train = traindata[idx_2,]
 test = traindata[-idx_2,]
 rf.model = readRDS(file = "rfe.train.RDS")
@@ -132,9 +166,6 @@ print(final.boruta)
 
 
 getSelectedAttributes(final.boruta, withTentative = F)
-
-
-
 boruta.df = attStats(final.boruta)
 class(boruta.df)
 print(boruta.df)
@@ -164,14 +195,15 @@ rfe.train = readRDS(file = "rfe.train.RDS")
 
 
 
-Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){ 
+Select_Features = function(method = c("Random_Forest", "Boruta_Tentative","Boruta_Final")){ 
   require(Boruta)
   require(randomForest)
   
-  if(method == "RF") {
+  if(method == "Random_Forest") {
     #RF Feature Selection
     x=plot(rfe.train, type=c("g", "o"), cex = 1.0, col = 1:11, Labels = T)
     return(x)
+    
   }
   else if(method == "Boruta_Tentative"){
     #Tentative Boruta
@@ -190,7 +222,7 @@ Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){
     plot(final.boruta, xlab = "", xaxt = "n")
     lz=lapply(1:ncol(final.boruta$ImpHistory),function(i)
       final.boruta$ImpHistory[is.finite(final.boruta$ImpHistory[,i]),i])
-    names(lz) = colnames(final.boruta$ImpHistory)
+    names(lz) =     names(lz) = colnames(final.boruta$ImpHistory)
     Labels = sort(sapply(lz,median))
     axis(side = 1,las=2,labels = names(Labels),
          at = 1:ncol(final.boruta$ImpHistory), cex.axis = 0.7)
@@ -201,12 +233,12 @@ Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){
   }
 
 
-Select_Features(method = "RF")
+Select_Features(method = "Random_Forest")
 Select_Features(method = "Boruta_Tentative")
 Select_Features(method = "Boruta_Final")
 
 
-#RF Feature Importance#
+#Random Forest Feature Importance#
 #The plot shows how the RMSE changes as we increase the number of variables,
 # the variables corresponding to the lowest RMSE are "selected" and can 
 # be found using the "predictors" function.
@@ -226,5 +258,7 @@ Select_Features(method = "Boruta_Final")
 # respectively rejected and confirmed attributes#
 
 ## SOURCE: (Kursa and Rudnicki, 2010)
+
+
 
 
