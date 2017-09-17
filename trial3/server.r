@@ -22,11 +22,11 @@ if(!require("PRROC")) install.packages("PRROC"); library("PRROC")
 
 
 
-setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
+#setwd("/Users/coldbear/Desktop/APAPaper/APA-project/trial3")
 
 #Load data 
 data <- readRDS("dataset.rds")
-rf.model <- readRDS("rf.model")
+rf.model <- readRDS("rfe.train.RDS")
 set.seed(123)
 #idx <- createDataPartition(data$order,p = 0.7, list = FALSE)
 #train <- data[idx, ]
