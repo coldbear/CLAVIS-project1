@@ -4,7 +4,6 @@
 ############################################################
 
 
-
 #Load data 
 data <- readRDS("workset")
 rf.model <- readRDS("rf.model")
@@ -36,8 +35,6 @@ source("modelselection.r")
 source("varselection.r")
 source("evaluation.r")
 source("interpretation.r")
-
-
 
 #Start of server function
 
