@@ -21,11 +21,16 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
     
   mainPanel(h2("Application Description"),
              p("The primary goal of the application is provision of CLAssifier VISualization infrastructure for the complimentary usage when performing a task of classification analysis. Authors strongly believe in efficiency and utility of visual perception when going through the classic KDD process. The appliation consists of 5 tabls:"),
-            p("Data Exploration: "),
-            p("Model Selection: "),
-            p("Variable Selection: "),
-            p("Model  Evaluation: "),
-            p("Interpretation: "))
+            h4("Data Exploration:"),
+            p("contains brief overview of the dataset, scatterplot  depicting the intervariable  interaction, class disctributions across key varibles, boxplot data distributions and the table of missing  values"),
+            h4("Model Selection:"),
+            p("offers three graphic options depicting the model output and allows to experiment with cost function effect on optimal cutoff  point"), 
+            h4("Variable Selection:"),
+            p("provides  three graphic expressions of Random Forest, Boruta Tentative and Boruta General variable selection methods"),
+            h4("Model  Evaluation:"),
+            p("contains visualised confusion matrix and error decomposition plot, allowing to explore effects of different  threshold values"),
+            h4("Interpretation:"),
+            p("addressed the internal 'chemistry' of  the models, offering a look into the black box using Partial Dependende and ICEbox plots"))
              ),
            
                    #####DATA  EXPLORATION TAB#####
@@ -63,8 +68,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
          
   titlePanel("Model Selection"), 
   
-  sidebarPanel(p("This tab offers three visualizations that are aiming to..."),
-               selectInput(inputId = "plottype", label ="Select type of plot:", choices = c("ROC-Curve", "PR-Curve", "Uplift-Curve")),
+  sidebarPanel(selectInput(inputId = "plottype", label ="Select type of plot:", choices = c("ROC-Curve", "PR-Curve", "Uplift-Curve")),
                numericInput(inputId = "CBTN", step = 1,label = "Cost Benefit True Negative:",value = 0),
                numericInput(inputId = "CBFN",step = 1,label = "Cost Benefit False Negative:",value = -1),
                numericInput(inputId = "CBFP",step = 1,label = "Cost Benefit False Positive:",value = -1),
@@ -83,16 +87,7 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   sidebarPanel(selectInput(
     inputId = "method", label ="Select method:", choices = c("RF", "Boruta_Tentative","Boruta_Final")),
-    h2("RF variable selection"),
-    p("The plot shows how the RMSE changes as we increase the number of variables,the variables corresponding to the lowest RMSE are 'selected' and can be found using the 'predictors' function."),
-    h2("Tentative Boruta Explanation"),
-    p("Blue boxplots correspond to minimal, average and maximum Z score of a 
-        shadow attribute. Red, yello and green boxplots represent Z scores of
-      respectively rejected, tentatively confirmed and confirmed attributes."),
-    h2("Final Boruta Explanation"),
-    p("Blue boxplots correspond to minimum, average and maximum Z score of a 
-        shadow attribute. Red and green boxplots represent Z scores of
-    respectively rejected and confirmed attributes")
+    textOutput("vstext")
    ), 
   
   mainPanel(

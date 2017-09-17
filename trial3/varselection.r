@@ -40,3 +40,18 @@ Select_Features = function(method = c("RF", "Boruta_Tentative","Boruta_Final")){
   }
 }
 
+annotation <- function(method){
+  if(method == "RF") {
+    print("The plot shows how the RMSE changes as we increase the number of variables,the variables corresponding to the lowest RMSE are 'selected' and can be found using the 'predictors' function.")
+  }
+  else if(method == "Boruta_Tentative"){
+    print("Blue boxplots correspond to minimal, average and maximum Z score of a 
+        shadow attribute. Red, yello and green boxplots represent Z scores of
+    respectively rejected, tentatively confirmed and confirmed attributes.")
+  }
+  else if (method == "Boruta_Final"){
+    print("Blue boxplots correspond to minimum, average and maximum Z score of a 
+        shadow attribute. Red and green boxplots represent Z scores of
+          respectively rejected and confirmed attributes")
+}
+}

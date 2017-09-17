@@ -102,6 +102,10 @@ output$vs <- renderPlot({
   Select_Features(input$method)
 })
 
+output$vstext <- renderPrint({
+  annotation(input$method)
+  })
+
 
 
             #####EVALUATION TAB#####
