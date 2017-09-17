@@ -84,10 +84,12 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
   
   mainPanel(h2("Confusion matrix"), 
             plotOutput("confmatrix"),
-            #verbatimTextOutput("evaloutput")
+            #verbatimTextOutput("confmatrixoutput"),
             h2("Error Decomposition"),
             plotOutput("errorlow"),
-            plotOutput("errorhigh"))
+            plotOutput("errorhigh")
+            #verbatimTextOutput("evalerroroutput")
+            )
   ),
 
                    

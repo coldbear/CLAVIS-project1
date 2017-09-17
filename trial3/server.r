@@ -100,13 +100,9 @@ output$confmatrix <- renderPlot({
   return_confmat(rf.model, test, test$order, input$evalthreshnum, 1,0, input$evalthresh)
 })
 
-output$evaloutput <- renderPrint({
-  capture.output(evaluate(model = rf.model,
-                          modelname = "Random Forest",
-                          data = test,actual = test$order,
-                          pos = 1,neg = 0,
-                          threshold=input$evalthresh))
-})
+#output$confmatrixoutput <- renderPrint({
+#  capture.output(return_confmat(rf.model, test, test$order, input$evalthreshnum, 1,0, input$evalthresh))
+#})
 
   output$errorlow <- renderPlot({
     error_decomposition(rf.model,test$order,"low",input$evalthreshnum,input$evalthresh)
@@ -115,6 +111,9 @@ output$evaloutput <- renderPrint({
   output$errorhigh <- renderPlot({
     error_decomposition(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
   })
+ # output$evalerroroutput <- renderPrint({
+ #   capture.output(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
+ # })
 
 
             #####INTERPRETATION TAB#####
