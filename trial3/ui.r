@@ -73,17 +73,21 @@ shinyUI(navbarPage(title=strong("CLAVIS"),
                    
                    
                    #####EVALUATION TAB#####
-  
+  #return_confmat(rf.model, test, test$order, input$evalthreshnum, 1,0, input$evalthresh)
   tabPanel("Evaluation",
            
   titlePanel("Model  Evaluation"), 
   
- sidebarPanel(selectInput(inputId = "evalthresh", label ="Select threshold:", choices = c("Random", "Mean", "Median", "3quad"))
+ sidebarPanel(numericInput(inputId = "evalthreshnum",min = 0, max = 1, step =0.05,label = "Classification threshold:",value = 0.6),
+              selectInput(inputId = "evalthresh", label ="Select threshold:", choices = c("Random", "Mean", "Median", "3quad"))
            ),
   
-  mainPanel(h2("Confusion matrix and error decompositon"), 
-            plotOutput("eval"),
-            verbatimTextOutput("evaloutput"))
+  mainPanel(h2("Confusion matrix"), 
+            plotOutput("confmatrix"),
+            #verbatimTextOutput("evaloutput")
+            h2("Error Decomposition"),
+            plotOutput("errorlow"),
+            plotOutput("errorhigh"))
   ),
 
                    

@@ -35,7 +35,7 @@ train <- readRDS("train")
 source("dataexploration.r")
 source("modelselection.r")
 source("varselection.r")
-#source("evaluation.r")
+source("evaluation.r")
 source("interpretation.r")
 
 
@@ -96,9 +96,8 @@ output$vs <- renderPlot({
 
             #####EVALUATION TAB#####
 
-output$eval <- renderPlot({
-  evaluate(rf.model,'Random Forest',test, test$order, 1,0,threshold=input$evalthresh)
-  #evaluate(rf.model, modelname = "Random Forest",data = test,actual = test$order, pos = 1,neg = 0,threshold="Mean")
+output$confmatrix <- renderPlot({
+  return_confmat(rf.model, test, test$order, input$evalthreshnum, 1,0, input$evalthresh)
 })
 
 output$evaloutput <- renderPrint({
@@ -108,6 +107,14 @@ output$evaloutput <- renderPrint({
                           pos = 1,neg = 0,
                           threshold=input$evalthresh))
 })
+
+  output$errorlow <- renderPlot({
+    error_decomposition(rf.model,test$order,"low",input$evalthreshnum,input$evalthresh)
+})
+  
+  output$errorhigh <- renderPlot({
+    error_decomposition(rf.model,test$order,"high",input$evalthreshnum,input$evalthresh)
+  })
 
 
             #####INTERPRETATION TAB#####
