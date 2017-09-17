@@ -18,7 +18,7 @@ sse <- function(actual, pred) {
 }
 
 # Custom results function
-return_confmat(rf.model, test, test$order, 0.8, 1,0, "Random")
+
 return_confmat <- function(rf.model, test, actual,threshold,pos,neg,threshold_name){
   
   probabilities = predict(rf.model, newdata = test,type = "prob")[,2]
